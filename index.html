@@ -1176,6 +1176,172 @@
             color: var(--text-light);
             margin-top: 4px;
         }
+        
+        .upload-progress {
+            width: 100%;
+            height: 4px;
+            background: var(--grey);
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .upload-progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .payment-card {
+            background: var(--white);
+            border-radius: var(--radius-large);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+        }
+        
+        .payment-methods {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        
+        .payment-method {
+            flex: 1;
+            border: 1px solid var(--grey);
+            border-radius: var(--radius);
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .payment-method.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+        
+        .payment-method i {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+        
+        .payment-method-name {
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .referral-code {
+            background: var(--primary-light);
+            border-radius: var(--radius);
+            padding: 12px;
+            margin-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .referral-code-text {
+            font-family: monospace;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            padding: 6px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius-large);
+            padding: 16px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        
+        .login-form {
+            background: var(--white);
+            border-radius: var(--radius-large);
+            padding: 20px;
+            box-shadow: var(--shadow-medium);
+            margin-top: 40px;
+        }
+        
+        .login-title {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .login-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-large);
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .login-btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--grey);
+        }
+        
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            background: none;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .auth-tab.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
     </style>
 </head>
 <body>
@@ -1201,13 +1367,82 @@
     </header>
 
     <main>
+        <!-- Login/Signup Page -->
+        <div id="auth-page" class="page">
+            <div class="login-form">
+                <div class="login-title">Welcome to DMK Money</div>
+                
+                <div class="auth-tabs">
+                    <button class="auth-tab active" id="login-tab">Login</button>
+                    <button class="auth-tab" id="signup-tab">Sign Up</button>
+                </div>
+                
+                <div id="login-form">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="login-email" placeholder="your@email.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="login-password" placeholder="Enter your password">
+                    </div>
+                    
+                    <button class="login-btn" onclick="login()">Login</button>
+                </div>
+                
+                <div id="signup-form" class="hidden">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-input" id="signup-name" placeholder="Enter your full name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="signup-email" placeholder="your@email.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" class="form-input" id="signup-phone" placeholder="+260 XXX XXX XXX">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="signup-password" placeholder="Create a password">
+                    </div>
+                    
+                    <button class="login-btn" onclick="signup()">Create Account</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Home Page -->
-        <div id="home-page" class="page">
+        <div id="home-page" class="page hidden">
             <div class="referral-banner">
                 <i class="fa-solid fa-gift"></i>
                 <div class="referral-content">
                     <h3>Refer & Earn 5% Bonus!</h3>
                     <p>Invite friends and get cash rewards when they apply for a loan</p>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-loans">0</div>
+                    <div class="stat-label">Total Loans</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="active-loans">0</div>
+                    <div class="stat-label">Active Loans</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="credit-score">-</div>
+                    <div class="stat-label">Credit Score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="referral-earnings">K0</div>
+                    <div class="stat-label">Referral Earnings</div>
                 </div>
             </div>
 
@@ -1242,11 +1477,11 @@
                 <div class="form-group">
                     <label class="form-label">Repayment Period</label>
                     <select class="form-select" id="calc-period" onchange="calculateLoan()">
-                        <option value="1">1 Week</option>
-                        <option value="2">2 Weeks</option>
-                        <option value="3">3 Weeks</option>
-                        <option value="4" selected>1 Month</option>
-                        <option value="8">2 Months</option>
+                        <option value="7">1 Week</option>
+                        <option value="14">2 Weeks</option>
+                        <option value="21">3 Weeks</option>
+                        <option value="30" selected>1 Month</option>
+                        <option value="60">2 Months</option>
                     </select>
                 </div>
                 <div class="calculator-result">
@@ -1363,6 +1598,9 @@
                             <div class="file-upload-text">Click to upload</div>
                         </div>
                         <input type="file" id="profile-photo" accept="image/*" style="display: none;" onchange="handleFileUpload(this, 'profile-photo-upload')">
+                        <div class="upload-progress" id="profile-photo-progress">
+                            <div class="upload-progress-bar" id="profile-photo-progress-bar"></div>
+                        </div>
                         <div class="error-message" id="profile-photo-error">Profile photo is required</div>
                     </div>
                     
@@ -1546,6 +1784,9 @@
                             <div class="doc-upload-text">Click to upload NRC front</div>
                         </div>
                         <input type="file" id="nrc-front" accept="image/*" style="display: none;" onchange="handleFileUpload(this, 'nrc-front-upload')">
+                        <div class="upload-progress" id="nrc-front-progress">
+                            <div class="upload-progress-bar" id="nrc-front-progress-bar"></div>
+                        </div>
                         <div class="error-message" id="nrc-front-error">NRC front photo is required</div>
                     </div>
                     
@@ -1556,6 +1797,9 @@
                             <div class="doc-upload-text">Click to upload NRC back</div>
                         </div>
                         <input type="file" id="nrc-back" accept="image/*" style="display: none;" onchange="handleFileUpload(this, 'nrc-back-upload')">
+                        <div class="upload-progress" id="nrc-back-progress">
+                            <div class="upload-progress-bar" id="nrc-back-progress-bar"></div>
+                        </div>
                         <div class="error-message" id="nrc-back-error">NRC back photo is required</div>
                     </div>
                     
@@ -1568,6 +1812,9 @@
                                     <div class="doc-upload-text">Front View</div>
                                 </div>
                                 <input type="file" id="collateral-front" accept="image/*" style="display: none;" onchange="handleFileUpload(this, 'collateral-front-upload')">
+                                <div class="upload-progress" id="collateral-front-progress">
+                                    <div class="upload-progress-bar" id="collateral-front-progress-bar"></div>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <div class="doc-upload" id="collateral-back-upload" onclick="document.getElementById('collateral-back').click()">
@@ -1575,6 +1822,9 @@
                                     <div class="doc-upload-text">Back View</div>
                                 </div>
                                 <input type="file" id="collateral-back" accept="image/*" style="display: none;" onchange="handleFileUpload(this, 'collateral-back-upload')">
+                                <div class="upload-progress" id="collateral-back-progress">
+                                    <div class="upload-progress-bar" id="collateral-back-progress-bar"></div>
+                                </div>
                             </div>
                         </div>
                         <div class="form-row">
@@ -1584,6 +1834,9 @@
                                     <div class="doc-upload-text">Left Side</div>
                                 </div>
                                 <input type="file" id="collateral-left" accept="image/*" style="display: none;" onchange="handleFileUpload(this, 'collateral-left-upload')">
+                                <div class="upload-progress" id="collateral-left-progress">
+                                    <div class="upload-progress-bar" id="collateral-left-progress-bar"></div>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <div class="doc-upload" id="collateral-right-upload" onclick="document.getElementById('collateral-right').click()">
@@ -1591,6 +1844,9 @@
                                     <div class="doc-upload-text">Right Side</div>
                                 </div>
                                 <input type="file" id="collateral-right" accept="image/*" style="display: none;" onchange="handleFileUpload(this, 'collateral-right-upload')">
+                                <div class="upload-progress" id="collateral-right-progress">
+                                    <div class="upload-progress-bar" id="collateral-right-progress-bar"></div>
+                                </div>
                             </div>
                         </div>
                         <div class="error-message" id="collateral-photos-error">At least one collateral photo is required</div>
@@ -1652,6 +1908,9 @@
                             <div class="doc-upload-text">Click to upload ID</div>
                         </div>
                         <input type="file" id="kin-id" accept="image/*" style="display: none;" onchange="handleFileUpload(this, 'kin-id-upload')">
+                        <div class="upload-progress" id="kin-id-progress">
+                            <div class="upload-progress-bar" id="kin-id-progress-bar"></div>
+                        </div>
                     </div>
                     
                     <div class="form-navigation">
@@ -1728,6 +1987,55 @@
             </div>
         </div>
 
+        <!-- Payments Page -->
+        <div id="payments-page" class="page hidden">
+            <h3 class="section-title"><i class="fa-solid fa-credit-card"></i> Payments</h3>
+            
+            <div class="payment-card">
+                <h4>Make a Payment</h4>
+                <div class="form-group">
+                    <label class="form-label">Select Loan</label>
+                    <select class="form-select" id="payment-loan-select">
+                        <option value="">Select a loan to pay</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Payment Amount (K)</label>
+                    <input type="number" class="form-input" id="payment-amount" placeholder="Enter amount">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Payment Method</label>
+                    <div class="payment-methods">
+                        <div class="payment-method" data-method="mobile-money">
+                            <i class="fa-solid fa-mobile-screen"></i>
+                            <div class="payment-method-name">Mobile Money</div>
+                        </div>
+                        <div class="payment-method" data-method="bank-transfer">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <div class="payment-method-name">Bank Transfer</div>
+                        </div>
+                        <div class="payment-method" data-method="cash">
+                            <i class="fa-solid fa-money-bill"></i>
+                            <div class="payment-method-name">Cash</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="apply-btn" id="make-payment-btn">Make Payment</button>
+            </div>
+            
+            <h3 class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> Payment History</h3>
+            
+            <div id="payment-history-container">
+                <div class="empty-state">
+                    <i class="fa-solid fa-receipt"></i>
+                    <p>No payment history</p>
+                </div>
+            </div>
+        </div>
+
         <!-- Profile Page -->
         <div id="profile-page" class="page hidden">
             <h3 class="section-title"><i class="fa-solid fa-user"></i> My Profile</h3>
@@ -1770,6 +2078,14 @@
                     <button class="apply-btn" id="update-profile-btn">Update Profile</button>
                 </div>
             </div>
+            
+            <div class="referral-code">
+                <div>
+                    <div style="font-size: 13px; font-weight: 500;">Your Referral Code</div>
+                    <div class="referral-code-text" id="referral-code">DMK-5A8B2C</div>
+                </div>
+                <button class="copy-btn" onclick="copyReferralCode()">Copy</button>
+            </div>
         </div>
     </main>
 
@@ -1790,6 +2106,10 @@
             <i class="fa-solid fa-paper-plane"></i>
             <span>Apply</span>
         </button>
+        <button class="nav-item" onclick="showPage('payments-page')">
+            <i class="fa-solid fa-credit-card"></i>
+            <span>Payments</span>
+        </button>
         <button class="nav-item" onclick="showPage('profile-page')">
             <i class="fa-solid fa-user"></i>
             <span>Profile</span>
@@ -1809,9 +2129,9 @@
                 <i class="fa-solid fa-user"></i>
                 <span>Profile</span>
             </div>
-            <div class="panel-item" onclick="closePanel()">
-                <i class="fa-solid fa-phone"></i>
-                <span>Contact Us</span>
+            <div class="panel-item" onclick="showPage('payments-page'); closePanel()">
+                <i class="fa-solid fa-credit-card"></i>
+                <span>Payments</span>
             </div>
             <div class="panel-item" onclick="closePanel()">
                 <i class="fa-solid fa-file-contract"></i>
@@ -1821,7 +2141,7 @@
                 <i class="fa-solid fa-question-circle"></i>
                 <span>Help & Support</span>
             </div>
-            <div class="panel-item" onclick="closePanel()">
+            <div class="panel-item" onclick="showReferralSection(); closePanel()">
                 <i class="fa-solid fa-share-alt"></i>
                 <span>Refer a Friend</span>
             </div>
@@ -1829,7 +2149,7 @@
                 <i class="fa-solid fa-cog"></i>
                 <span>Settings</span>
             </div>
-            <div class="panel-item" onclick="closePanel()">
+            <div class="panel-item" onclick="logout(); closePanel()">
                 <i class="fa-solid fa-right-from-bracket"></i>
                 <span>Logout</span>
             </div>
@@ -1883,6 +2203,93 @@
         let uploadedFiles = {};
         let notifications = [];
         let userLoans = [];
+        let userPayments = [];
+        let userStats = {
+            totalLoans: 0,
+            activeLoans: 0,
+            creditScore: '-',
+            referralEarnings: 0
+        };
+
+        // Check authentication state
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                showPage('home-page');
+                loadUserData();
+            } else {
+                currentUser = null;
+                showPage('auth-page');
+            }
+        });
+
+        // Authentication functions
+        function login() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            if (!email || !password) {
+                showToast('Please enter both email and password', 'error');
+                return;
+            }
+            
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    showToast('Login successful!', 'success');
+                })
+                .catch((error) => {
+                    console.error('Login error:', error);
+                    showToast('Login failed: ' + error.message, 'error');
+                });
+        }
+        
+        function signup() {
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const phone = document.getElementById('signup-phone').value;
+            const password = document.getElementById('signup-password').value;
+            
+            if (!name || !email || !phone || !password) {
+                showToast('Please fill all fields', 'error');
+                return;
+            }
+            
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    
+                    // Create user profile in Firestore
+                    return db.collection('users').doc(user.uid).set({
+                        name: name,
+                        email: email,
+                        phone: phone,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        referralCode: generateReferralCode(),
+                        creditScore: 650 // Default credit score
+                    });
+                })
+                .then(() => {
+                    showToast('Account created successfully!', 'success');
+                })
+                .catch((error) => {
+                    console.error('Signup error:', error);
+                    showToast('Signup failed: ' + error.message, 'error');
+                });
+        }
+        
+        function logout() {
+            auth.signOut()
+                .then(() => {
+                    showToast('Logged out successfully', 'success');
+                })
+                .catch((error) => {
+                    console.error('Logout error:', error);
+                });
+        }
+        
+        function generateReferralCode() {
+            return 'DMK-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
 
         // Page navigation
         function showPage(pageId) {
@@ -1898,17 +2305,43 @@
             
             if (pageId === 'home-page') {
                 document.querySelectorAll('.nav-item')[0].classList.add('active');
+                loadUserStats();
             } else if (pageId === 'loans-page') {
                 document.querySelectorAll('.nav-item')[1].classList.add('active');
                 loadUserLoans();
             } else if (pageId === 'apply-page') {
                 document.querySelectorAll('.nav-item')[2].classList.add('active');
                 resetApplicationForm();
-            } else if (pageId === 'profile-page') {
+            } else if (pageId === 'payments-page') {
                 document.querySelectorAll('.nav-item')[3].classList.add('active');
+                loadPaymentData();
+            } else if (pageId === 'profile-page') {
+                document.querySelectorAll('.nav-item')[4].classList.add('active');
                 loadUserProfile();
+            } else if (pageId === 'auth-page') {
+                // Hide navigation for auth page
+                document.querySelector('nav').style.display = 'none';
+                document.querySelector('.floating-btn').style.display = 'none';
+            } else {
+                document.querySelector('nav').style.display = 'flex';
+                document.querySelector('.floating-btn').style.display = 'flex';
             }
         }
+        
+        // Auth tabs
+        document.getElementById('login-tab').addEventListener('click', function() {
+            document.getElementById('login-tab').classList.add('active');
+            document.getElementById('signup-tab').classList.remove('active');
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('signup-form').classList.add('hidden');
+        });
+        
+        document.getElementById('signup-tab').addEventListener('click', function() {
+            document.getElementById('signup-tab').classList.add('active');
+            document.getElementById('login-tab').classList.remove('active');
+            document.getElementById('signup-form').classList.remove('hidden');
+            document.getElementById('login-form').classList.add('hidden');
+        });
         
         // Side panel functionality
         document.getElementById('menu-toggle').addEventListener('click', function() {
@@ -1992,7 +2425,9 @@
             
             // Clear form fields
             document.querySelectorAll('.form-input, .form-select').forEach(field => {
-                field.value = '';
+                if (field.id !== 'loan-amount-input') {
+                    field.value = '';
+                }
                 field.classList.remove('error');
             });
             
@@ -2024,6 +2459,16 @@
                 
                 // Hide error message if shown
                 document.getElementById('collateral-type-error').style.display = 'none';
+            });
+        });
+        
+        // Payment method selection
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', function() {
+                document.querySelectorAll('.payment-method').forEach(m => {
+                    m.classList.remove('selected');
+                });
+                this.classList.add('selected');
             });
         });
         
@@ -2449,14 +2894,42 @@
                 // Generate application ID
                 const applicationId = 'APP' + Date.now();
                 
-                // Upload files to Firebase Storage
+                // Upload files to Firebase Storage with progress tracking
                 const documentUrls = {};
+                
                 for (const [fieldId, file] of Object.entries(uploadedFiles)) {
-                    const filePath = `applications/${applicationId}/${fieldId}`;
+                    const filePath = `applications/${currentUser.uid}/${applicationId}/${fieldId}`;
                     const storageRef = storage.ref(filePath);
-                    const snapshot = await storageRef.put(file);
-                    const downloadUrl = await snapshot.ref.getDownloadURL();
-                    documentUrls[fieldId] = downloadUrl;
+                    
+                    // Show progress bar
+                    const progressId = fieldId + '-progress';
+                    const progressBarId = fieldId + '-progress-bar';
+                    document.getElementById(progressId).style.display = 'block';
+                    
+                    const uploadTask = storageRef.put(file);
+                    
+                    // Wait for upload to complete
+                    await new Promise((resolve, reject) => {
+                        uploadTask.on('state_changed',
+                            (snapshot) => {
+                                // Update progress bar
+                                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                document.getElementById(progressBarId).style.width = progress + '%';
+                            },
+                            (error) => {
+                                reject(error);
+                            },
+                            async () => {
+                                // Upload completed successfully
+                                const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
+                                documentUrls[fieldId] = downloadUrl;
+                                
+                                // Hide progress bar
+                                document.getElementById(progressId).style.display = 'none';
+                                resolve();
+                            }
+                        );
+                    });
                 }
                 
                 // Prepare application data for Firestore
@@ -2464,7 +2937,7 @@
                     ...applicationData,
                     documents: documentUrls,
                     applicationId: applicationId,
-                    userId: currentUser ? currentUser.uid : 'anonymous',
+                    userId: currentUser.uid,
                     status: 'pending',
                     submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -2495,6 +2968,16 @@
             }
         }
         
+        // Load user data from Firebase
+        async function loadUserData() {
+            await Promise.all([
+                loadUserLoans(),
+                loadUserProfile(),
+                loadUserStats(),
+                loadPaymentData()
+            ]);
+        }
+        
         // Load user loans from Firebase
         async function loadUserLoans() {
             const activeLoansContainer = document.getElementById('active-loans-container');
@@ -2509,7 +2992,7 @@
             try {
                 // Get applications from Firestore
                 const querySnapshot = await db.collection('applications')
-                    .where('userId', '==', 'anonymous') // In a real app, use actual user ID
+                    .where('userId', '==', currentUser.uid)
                     .orderBy('submittedAt', 'desc')
                     .get();
                 
@@ -2550,6 +3033,9 @@
                 } else {
                     historyContainer.innerHTML = '<div class="empty-state"><i class="fa-solid fa-receipt"></i><p>No previous loans</p></div>';
                 }
+                
+                // Update user loans array
+                userLoans = applications;
                 
             } catch (error) {
                 console.error('Error loading loans:', error);
@@ -2617,25 +3103,187 @@
         }
         
         // Load user profile
-        function loadUserProfile() {
-            // In a real app, you would fetch this data from Firestore
-            // For now, we'll use mock data
+        async function loadUserProfile() {
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    
+                    document.getElementById('profile-name').textContent = userData.name || 'User';
+                    document.getElementById('profile-phone').textContent = userData.phone || 'No phone';
+                    document.getElementById('profile-name-input').value = userData.name || '';
+                    document.getElementById('profile-phone-input').value = userData.phone || '';
+                    document.getElementById('profile-email-input').value = userData.email || '';
+                    document.getElementById('profile-dob-input').value = userData.dob || '';
+                    document.getElementById('profile-id-input').value = userData.nationalId || '';
+                    document.getElementById('referral-code').textContent = userData.referralCode || 'DMK-5A8B2C';
+                }
+            } catch (error) {
+                console.error('Error loading user profile:', error);
+            }
+        }
+        
+        // Load user stats
+        async function loadUserStats() {
+            try {
+                // In a real app, you would calculate these from the user's loan history
+                // For now, we'll use mock data
+                
+                const totalLoans = userLoans.length;
+                const activeLoans = userLoans.filter(loan => loan.status === 'approved').length;
+                
+                document.getElementById('total-loans').textContent = totalLoans;
+                document.getElementById('active-loans').textContent = activeLoans;
+                document.getElementById('credit-score').textContent = '720';
+                document.getElementById('referral-earnings').textContent = 'K' + (userStats.referralEarnings || '0');
+                
+            } catch (error) {
+                console.error('Error loading user stats:', error);
+            }
+        }
+        
+        // Load payment data
+        async function loadPaymentData() {
+            const paymentHistoryContainer = document.getElementById('payment-history-container');
+            const paymentLoanSelect = document.getElementById('payment-loan-select');
             
-            const mockProfile = {
-                name: 'John Doe',
-                phone: '+260 123 456 789',
-                email: 'johndoe@example.com',
-                dob: '1990-01-01',
-                idNumber: '123456/78/9'
-            };
+            // Clear containers
+            paymentHistoryContainer.innerHTML = '';
+            paymentLoanSelect.innerHTML = '<option value="">Select a loan to pay</option>';
             
-            document.getElementById('profile-name').textContent = mockProfile.name;
-            document.getElementById('profile-phone').textContent = mockProfile.phone;
-            document.getElementById('profile-name-input').value = mockProfile.name;
-            document.getElementById('profile-phone-input').value = mockProfile.phone;
-            document.getElementById('profile-email-input').value = mockProfile.email;
-            document.getElementById('profile-dob-input').value = mockProfile.dob;
-            document.getElementById('profile-id-input').value = mockProfile.idNumber;
+            try {
+                // Get user's approved loans for payment selection
+                const approvedLoans = userLoans.filter(loan => loan.status === 'approved');
+                
+                if (approvedLoans.length > 0) {
+                    approvedLoans.forEach(loan => {
+                        const option = document.createElement('option');
+                        option.value = loan.applicationId;
+                        option.textContent = `Loan #${loan.applicationId} - K${loan.loanDetails.amount}`;
+                        paymentLoanSelect.appendChild(option);
+                    });
+                }
+                
+                // Get payment history from Firestore
+                const paymentsSnapshot = await db.collection('payments')
+                    .where('userId', '==', currentUser.uid)
+                    .orderBy('paymentDate', 'desc')
+                    .get();
+                
+                const payments = [];
+                paymentsSnapshot.forEach(doc => {
+                    payments.push({ id: doc.id, ...doc.data() });
+                });
+                
+                if (payments.length > 0) {
+                    payments.forEach(payment => {
+                        const paymentItem = createPaymentItem(payment);
+                        paymentHistoryContainer.appendChild(paymentItem);
+                    });
+                } else {
+                    paymentHistoryContainer.innerHTML = '<div class="empty-state"><i class="fa-solid fa-receipt"></i><p>No payment history</p></div>';
+                }
+                
+                // Update user payments array
+                userPayments = payments;
+                
+            } catch (error) {
+                console.error('Error loading payment data:', error);
+                paymentHistoryContainer.innerHTML = '<div class="empty-state"><i class="fa-solid fa-receipt"></i><p>No payment history</p></div>';
+            }
+        }
+        
+        function createPaymentItem(payment) {
+            const paymentItem = document.createElement('div');
+            paymentItem.className = 'loan-item';
+            
+            const paymentDate = payment.paymentDate ? payment.paymentDate.toDate().toLocaleDateString() : 'Unknown date';
+            
+            paymentItem.innerHTML = `
+                <div class="loan-header">
+                    <div class="loan-details">
+                        <div class="loan-title">Payment for Loan #${payment.loanId}</div>
+                        <div class="loan-date">Paid: ${paymentDate}</div>
+                    </div>
+                    <div class="loan-amount-badge">K${payment.amount}</div>
+                </div>
+                <div class="loan-info">
+                    <div class="loan-info-label">Payment Method</div>
+                    <div class="loan-info-value">${payment.method}</div>
+                </div>
+                <div class="loan-info">
+                    <div class="loan-info-label">Status</div>
+                    <div class="loan-info-value">${payment.status || 'Completed'}</div>
+                </div>
+            `;
+            
+            return paymentItem;
+        }
+        
+        // Make a payment
+        async function makePayment() {
+            const loanId = document.getElementById('payment-loan-select').value;
+            const amount = document.getElementById('payment-amount').value;
+            const selectedMethod = document.querySelector('.payment-method.selected');
+            
+            if (!loanId || !amount || !selectedMethod) {
+                showToast('Please fill all payment details', 'error');
+                return;
+            }
+            
+            const method = selectedMethod.getAttribute('data-method');
+            
+            try {
+                // Create payment record in Firestore
+                const paymentId = 'PAY' + Date.now();
+                await db.collection('payments').doc(paymentId).set({
+                    paymentId: paymentId,
+                    userId: currentUser.uid,
+                    loanId: loanId,
+                    amount: parseInt(amount),
+                    method: method,
+                    status: 'completed',
+                    paymentDate: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showToast('Payment submitted successfully!', 'success');
+                addNotification('Payment Received', `Your payment of K${amount} has been received.`);
+                
+                // Reset form
+                document.getElementById('payment-amount').value = '';
+                document.querySelectorAll('.payment-method').forEach(m => {
+                    m.classList.remove('selected');
+                });
+                
+                // Reload payment data
+                loadPaymentData();
+                
+            } catch (error) {
+                console.error('Error making payment:', error);
+                showToast('Error processing payment. Please try again.', 'error');
+            }
+        }
+        
+        // Copy referral code
+        function copyReferralCode() {
+            const referralCode = document.getElementById('referral-code').textContent;
+            navigator.clipboard.writeText(referralCode)
+                .then(() => {
+                    showToast('Referral code copied to clipboard!', 'success');
+                })
+                .catch(err => {
+                    console.error('Failed to copy: ', err);
+                    showToast('Failed to copy referral code', 'error');
+                });
+        }
+        
+        // Show referral section
+        function showReferralSection() {
+            showPage('profile-page');
+            // Scroll to referral section
+            setTimeout(() => {
+                document.querySelector('.referral-code').scrollIntoView({ behavior: 'smooth' });
+            }, 300);
         }
         
         // Notifications
@@ -2703,6 +3351,10 @@
             calculateRepayment();
             calculateLoan();
             
+            // Set up event listeners
+            document.getElementById('make-payment-btn').addEventListener('click', makePayment);
+            document.getElementById('update-profile-btn').addEventListener('click', updateProfile);
+            
             // Add some sample notifications
             addNotification('Welcome to DMK Money', 'Thank you for choosing DMK Money Solution for your financial needs.');
             addNotification('Loan Calculator', 'Use our loan calculator to estimate your repayment amount.');
@@ -2721,6 +3373,36 @@
                     addNotification(randomNotification.title, randomNotification.message);
                 }
             }, 30000);
+        }
+        
+        // Update user profile
+        async function updateProfile() {
+            const name = document.getElementById('profile-name-input').value;
+            const phone = document.getElementById('profile-phone-input').value;
+            const email = document.getElementById('profile-email-input').value;
+            const dob = document.getElementById('profile-dob-input').value;
+            const nationalId = document.getElementById('profile-id-input').value;
+            
+            try {
+                await db.collection('users').doc(currentUser.uid).update({
+                    name: name,
+                    phone: phone,
+                    email: email,
+                    dob: dob,
+                    nationalId: nationalId,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showToast('Profile updated successfully!', 'success');
+                
+                // Update displayed profile
+                document.getElementById('profile-name').textContent = name;
+                document.getElementById('profile-phone').textContent = phone;
+                
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                showToast('Error updating profile. Please try again.', 'error');
+            }
         }
         
         // Initialize the app when DOM is loaded
