@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DMK Money Solution</title>
+    <title>DMK Money Solution - Complete Loan Application System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -16,6 +16,8 @@
             --primary-dark: #0d47a1;
             --secondary: #ff6d00;
             --secondary-light: #ffe0b2;
+            --accent: #00c853;
+            --accent-light: #c8e6c9;
             --text-dark: #202124;
             --text-light: #5f6368;
             --white: #ffffff;
@@ -1342,9 +1344,865 @@
             color: var(--primary);
             border-bottom: 2px solid var(--primary);
         }
+
+        /* NEW STYLES FOR ENHANCED FEATURES */
+        
+        .offline-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--error);
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-size: 13px;
+            z-index: 1001;
+            display: none;
+        }
+        
+        .offline-indicator.show {
+            display: block;
+        }
+        
+        .document-checklist {
+            background: var(--accent-light);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-top: 16px;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .checklist-item i {
+            margin-right: 10px;
+            color: var(--accent);
+        }
+        
+        .checklist-item.completed {
+            color: var(--success);
+        }
+        
+        .checklist-item.completed i {
+            color: var(--success);
+        }
+        
+        .guarantor-section {
+            border-top: 1px solid var(--grey);
+            padding-top: 16px;
+            margin-top: 16px;
+        }
+        
+        .financial-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .bank-details {
+            background: var(--primary-light);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-top: 16px;
+        }
+        
+        .employment-history {
+            margin-top: 16px;
+        }
+        
+        .history-item {
+            background: var(--grey-light);
+            border-radius: var(--radius);
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        
+        .history-company {
+            font-weight: 600;
+        }
+        
+        .history-period {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        
+        .history-position {
+            font-size: 13px;
+        }
+        
+        .credit-score-display {
+            text-align: center;
+            margin: 16px 0;
+        }
+        
+        .score-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(var(--success) 0% 70%, var(--warning) 70% 90%, var(--error) 90% 100%);
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+        }
+        
+        .score-value {
+            position: relative;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        
+        .score-label {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        
+        .loan-purpose-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 12px;
+        }
+        
+        .purpose-item {
+            background: var(--white);
+            border: 1px solid var(--grey);
+            border-radius: var(--radius);
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .purpose-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .purpose-item.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .purpose-icon {
+            font-size: 20px;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+        
+        .purpose-name {
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .additional-docs {
+            margin-top: 16px;
+        }
+        
+        .doc-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .doc-item {
+            flex: 1;
+        }
+        
+        .terms-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--white);
+            border-radius: var(--radius-large);
+            padding: 20px;
+            box-shadow: var(--shadow-large);
+            z-index: 1002;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .terms-modal.show {
+            display: block;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--grey);
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        
+        .close-modal:hover {
+            background: var(--grey);
+        }
+        
+        .modal-content {
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-light);
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            display: none;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-overlay.active {
+            display: block;
+        }
+        
+        .application-timeline {
+            margin-top: 16px;
+        }
+        
+        .timeline-item {
+            display: flex;
+            margin-bottom: 16px;
+            position: relative;
+        }
+        
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 24px;
+            left: 11px;
+            height: calc(100% + 16px);
+            width: 2px;
+            background: var(--grey);
+        }
+        
+        .timeline-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--grey);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            margin-right: 12px;
+            z-index: 1;
+        }
+        
+        .timeline-item.completed .timeline-icon {
+            background: var(--success);
+        }
+        
+        .timeline-item.active .timeline-icon {
+            background: var(--primary);
+        }
+        
+        .timeline-content {
+            flex: 1;
+        }
+        
+        .timeline-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .timeline-date {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        
+        .timeline-description {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        
+        .dashboard-widgets {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .dashboard-widget {
+            background: var(--white);
+            border-radius: var(--radius-large);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        
+        .widget-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 18px;
+        }
+        
+        .widget-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+        
+        .widget-label {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 16px;
+        }
+        
+        .quick-action {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+        
+        .quick-action:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .action-icon {
+            font-size: 20px;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+        
+        .action-text {
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .application-summary {
+            background: var(--primary-light);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-top: 16px;
+        }
+        
+        .summary-section {
+            margin-bottom: 16px;
+        }
+        
+        .summary-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .summary-section-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: var(--primary-dark);
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+        
+        .summary-item-label {
+            color: var(--text-light);
+        }
+        
+        .summary-item-value {
+            font-weight: 500;
+        }
+        
+        .loan-comparison {
+            margin-top: 16px;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--grey);
+        }
+        
+        .comparison-table th {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-dark);
+        }
+        
+        .comparison-table td {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+        
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .recommended {
+            background: var(--accent-light);
+            border-left: 3px solid var(--accent);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 6px;
+        }
+        
+        .badge-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .badge-warning {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .badge-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .application-fee {
+            background: var(--warning);
+            color: white;
+            border-radius: var(--radius);
+            padding: 12px;
+            margin-top: 16px;
+            text-align: center;
+            font-size: 13px;
+        }
+        
+        .fee-amount {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .application-tips {
+            background: var(--accent-light);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-top: 16px;
+        }
+        
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .tip-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .tip-icon {
+            color: var(--accent);
+            margin-right: 10px;
+            margin-top: 2px;
+        }
+        
+        .tip-content {
+            flex: 1;
+            font-size: 13px;
+            color: var(--text-dark);
+        }
+        
+        .repayment-options {
+            margin-top: 16px;
+        }
+        
+        .option-item {
+            background: var(--white);
+            border: 1px solid var(--grey);
+            border-radius: var(--radius);
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .option-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .option-item.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .option-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        
+        .option-title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .option-rate {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .option-details {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        
+        .application-success {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--success);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 36px;
+        }
+        
+        .success-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .success-message {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+        
+        .application-id {
+            background: var(--primary-light);
+            border-radius: var(--radius);
+            padding: 12px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: center;
+        }
+        
+        .next-steps {
+            text-align: left;
+            margin-top: 20px;
+        }
+        
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        
+        .step-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .step-description {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+        
+        .application-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--grey);
+        }
+        
+        .status-indicator.active {
+            background: var(--primary);
+        }
+        
+        .status-indicator.completed {
+            background: var(--success);
+        }
+        
+        .status-text {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .application-documents {
+            margin-top: 20px;
+        }
+        
+        .document-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: var(--grey-light);
+            border-radius: var(--radius);
+            margin-bottom: 10px;
+        }
+        
+        .document-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .document-icon {
+            color: var(--primary);
+            font-size: 18px;
+        }
+        
+        .document-name {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .document-status {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            background: var(--grey);
+            color: var(--text-light);
+        }
+        
+        .document-status.uploaded {
+            background: var(--success);
+            color: white;
+        }
+        
+        .document-status.pending {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .support-section {
+            margin-top: 20px;
+        }
+        
+        .support-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 12px;
+        }
+        
+        .support-option {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+        
+        .support-option:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .support-icon {
+            font-size: 20px;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+        
+        .support-text {
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .application-faq {
+            margin-top: 20px;
+        }
+        
+        .faq-item {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+        
+        .faq-item:hover {
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .faq-answer {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 8px;
+            display: none;
+        }
+        
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+        
+        .faq-toggle {
+            color: var(--primary);
+            transition: var(--transition);
+        }
+        
+        .faq-item.active .faq-toggle {
+            transform: rotate(180deg);
+        }
+        
+        .application-security {
+            background: var(--primary-light);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .security-icon {
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .security-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        
+        .security-text {
+            font-size: 12px;
+            color: var(--text-light);
+        }
     </style>
 </head>
 <body>
+    <div class="offline-indicator" id="offline-indicator">
+        <i class="fas fa-wifi"></i> You are currently offline. Some features may not work properly.
+    </div>
+
     <header>
         <div class="header-content">
             <div class="logo-container">
@@ -1446,6 +2304,37 @@
                 </div>
             </div>
 
+            <div class="dashboard-widgets">
+                <div class="dashboard-widget">
+                    <div class="widget-icon">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div class="widget-value" id="next-payment">K0</div>
+                    <div class="widget-label">Next Payment</div>
+                </div>
+                <div class="dashboard-widget">
+                    <div class="widget-icon">
+                        <i class="fa-solid fa-calendar"></i>
+                    </div>
+                    <div class="widget-value" id="due-date">-</div>
+                    <div class="widget-label">Due Date</div>
+                </div>
+                <div class="dashboard-widget">
+                    <div class="widget-icon">
+                        <i class="fa-solid fa-percentage"></i>
+                    </div>
+                    <div class="widget-value" id="interest-rate">0%</div>
+                    <div class="widget-label">Interest Rate</div>
+                </div>
+                <div class="dashboard-widget">
+                    <div class="widget-icon">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <div class="widget-value" id="available-limit">K6,000</div>
+                    <div class="widget-label">Available Limit</div>
+                </div>
+            </div>
+
             <div class="loan-card">
                 <h2>Quick Loan Options</h2>
                 <p>Get instant cash when you need it most</p>
@@ -1465,6 +2354,33 @@
                         <div class="interest-period">1 Month</div>
                         <div class="interest-rate">35%</div>
                     </div>
+                </div>
+            </div>
+
+            <div class="quick-actions">
+                <div class="quick-action" onclick="showPage('apply-page')">
+                    <div class="action-icon">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </div>
+                    <div class="action-text">Apply Now</div>
+                </div>
+                <div class="quick-action" onclick="showPage('payments-page')">
+                    <div class="action-icon">
+                        <i class="fa-solid fa-credit-card"></i>
+                    </div>
+                    <div class="action-text">Make Payment</div>
+                </div>
+                <div class="quick-action" onclick="showReferralSection()">
+                    <div class="action-icon">
+                        <i class="fa-solid fa-share-alt"></i>
+                    </div>
+                    <div class="action-text">Refer & Earn</div>
+                </div>
+                <div class="quick-action" onclick="showPage('loans-page')">
+                    <div class="action-icon">
+                        <i class="fa-solid fa-history"></i>
+                    </div>
+                    <div class="action-text">Loan History</div>
                 </div>
             </div>
 
@@ -1647,6 +2563,53 @@
                         <div class="error-message" id="city-error">City is required</div>
                     </div>
                     
+                    <!-- NEW: Employment Information -->
+                    <div class="form-group">
+                        <label class="form-label">Employment Status</label>
+                        <select class="form-select" id="employment-status">
+                            <option value="">Select employment status</option>
+                            <option value="employed">Employed</option>
+                            <option value="self-employed">Self-Employed</option>
+                            <option value="unemployed">Unemployed</option>
+                            <option value="student">Student</option>
+                            <option value="retired">Retired</option>
+                        </select>
+                        <div class="error-message" id="employment-status-error">Employment status is required</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Monthly Income (K)</label>
+                        <input type="number" class="form-input" id="monthly-income" placeholder="Enter your monthly income">
+                        <div class="error-message" id="monthly-income-error">Monthly income is required</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Employer Name</label>
+                        <input type="text" class="form-input" id="employer-name" placeholder="Enter your employer name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Occupation</label>
+                        <input type="text" class="form-input" id="occupation" placeholder="Enter your occupation">
+                    </div>
+                    
+                    <!-- NEW: Bank Details -->
+                    <div class="bank-details">
+                        <h4>Bank Account Details</h4>
+                        <div class="form-group">
+                            <label class="form-label">Bank Name</label>
+                            <input type="text" class="form-input" id="bank-name" placeholder="Enter your bank name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Account Number</label>
+                            <input type="text" class="form-input" id="account-number" placeholder="Enter your account number">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Branch Code</label>
+                            <input type="text" class="form-input" id="branch-code" placeholder="Enter branch code">
+                        </div>
+                    </div>
+                    
                     <div class="form-navigation">
                         <button class="btn-secondary" disabled>Previous</button>
                         <button class="btn-primary" onclick="validateStep(1)">Next</button>
@@ -1716,6 +2679,46 @@
                         <div class="error-message" id="loan-reason-error">Loan reason is required</div>
                     </div>
                     
+                    <!-- NEW: Loan Purpose Category -->
+                    <div class="form-group">
+                        <label class="form-label">Loan Purpose Category</label>
+                        <div class="loan-purpose-grid">
+                            <div class="purpose-item" data-value="education">
+                                <div class="purpose-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                                <div class="purpose-name">Education</div>
+                            </div>
+                            <div class="purpose-item" data-value="medical">
+                                <div class="purpose-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+                                <div class="purpose-name">Medical</div>
+                            </div>
+                            <div class="purpose-item" data-value="business">
+                                <div class="purpose-icon"><i class="fa-solid fa-briefcase"></i></div>
+                                <div class="purpose-name">Business</div>
+                            </div>
+                            <div class="purpose-item" data-value="home">
+                                <div class="purpose-icon"><i class="fa-solid fa-house"></i></div>
+                                <div class="purpose-name">Home</div>
+                            </div>
+                            <div class="purpose-item" data-value="vehicle">
+                                <div class="purpose-icon"><i class="fa-solid fa-car"></i></div>
+                                <div class="purpose-name">Vehicle</div>
+                            </div>
+                            <div class="purpose-item" data-value="debt">
+                                <div class="purpose-icon"><i class="fa-solid fa-money-bill-transfer"></i></div>
+                                <div class="purpose-name">Debt</div>
+                            </div>
+                            <div class="purpose-item" data-value="emergency">
+                                <div class="purpose-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                                <div class="purpose-name">Emergency</div>
+                            </div>
+                            <div class="purpose-item" data-value="other">
+                                <div class="purpose-icon"><i class="fa-solid fa-ellipsis"></i></div>
+                                <div class="purpose-name">Other</div>
+                            </div>
+                        </div>
+                        <div class="error-message" id="loan-purpose-error">Loan purpose is required</div>
+                    </div>
+                    
                     <div class="form-navigation">
                         <button class="btn-secondary" onclick="previousStep(1)">Previous</button>
                         <button class="btn-primary" onclick="validateStep(2)">Next</button>
@@ -1777,6 +2780,22 @@
                         <div class="error-message" id="collateral-value-error">Collateral value is required</div>
                     </div>
                     
+                    <div class="document-checklist">
+                        <h4>Required Documents</h4>
+                        <div class="checklist-item">
+                            <i class="fa-solid fa-id-card"></i>
+                            <span>National ID (Front & Back)</span>
+                        </div>
+                        <div class="checklist-item">
+                            <i class="fa-solid fa-camera"></i>
+                            <span>Collateral Photos (Multiple Angles)</span>
+                        </div>
+                        <div class="checklist-item">
+                            <i class="fa-solid fa-file-contract"></i>
+                            <span>Proof of Ownership (Optional)</span>
+                        </div>
+                    </div>
+                    
                     <div class="form-group">
                         <label class="form-label">Upload NRC Front</label>
                         <div class="doc-upload" id="nrc-front-upload" onclick="document.getElementById('nrc-front').click()">
@@ -1805,8 +2824,8 @@
                     
                     <div class="form-group">
                         <label class="form-label">Upload Collateral Photos</label>
-                        <div class="form-row">
-                            <div class="form-group">
+                        <div class="doc-row">
+                            <div class="doc-item">
                                 <div class="doc-upload" id="collateral-front-upload" onclick="document.getElementById('collateral-front').click()">
                                     <i class="fa-solid fa-camera"></i>
                                     <div class="doc-upload-text">Front View</div>
@@ -1816,7 +2835,7 @@
                                     <div class="upload-progress-bar" id="collateral-front-progress-bar"></div>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="doc-item">
                                 <div class="doc-upload" id="collateral-back-upload" onclick="document.getElementById('collateral-back').click()">
                                     <i class="fa-solid fa-camera"></i>
                                     <div class="doc-upload-text">Back View</div>
@@ -1827,8 +2846,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group">
+                        <div class="doc-row">
+                            <div class="doc-item">
                                 <div class="doc-upload" id="collateral-left-upload" onclick="document.getElementById('collateral-left').click()">
                                     <i class="fa-solid fa-camera"></i>
                                     <div class="doc-upload-text">Left Side</div>
@@ -1838,7 +2857,7 @@
                                     <div class="upload-progress-bar" id="collateral-left-progress-bar"></div>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="doc-item">
                                 <div class="doc-upload" id="collateral-right-upload" onclick="document.getElementById('collateral-right').click()">
                                     <i class="fa-solid fa-camera"></i>
                                     <div class="doc-upload-text">Right Side</div>
@@ -1852,6 +2871,47 @@
                         <div class="error-message" id="collateral-photos-error">At least one collateral photo is required</div>
                     </div>
                     
+                    <!-- NEW: Proof of Ownership -->
+                    <div class="form-group">
+                        <label class="form-label">Proof of Ownership (Optional)</label>
+                        <div class="doc-upload" id="ownership-proof-upload" onclick="document.getElementById('ownership-proof').click()">
+                            <i class="fa-solid fa-file-contract"></i>
+                            <div class="doc-upload-text">Click to upload proof of ownership</div>
+                        </div>
+                        <input type="file" id="ownership-proof" accept="image/*,.pdf" style="display: none;" onchange="handleFileUpload(this, 'ownership-proof-upload')">
+                        <div class="upload-progress" id="ownership-proof-progress">
+                            <div class="upload-progress-bar" id="ownership-proof-progress-bar"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- NEW: Additional Documents -->
+                    <div class="additional-docs">
+                        <h4>Additional Documents (Optional)</h4>
+                        <div class="form-group">
+                            <label class="form-label">Proof of Income</label>
+                            <div class="doc-upload" id="income-proof-upload" onclick="document.getElementById('income-proof').click()">
+                                <i class="fa-solid fa-file-invoice-dollar"></i>
+                                <div class="doc-upload-text">Click to upload proof of income</div>
+                            </div>
+                            <input type="file" id="income-proof" accept="image/*,.pdf" style="display: none;" onchange="handleFileUpload(this, 'income-proof-upload')">
+                            <div class="upload-progress" id="income-proof-progress">
+                                <div class="upload-progress-bar" id="income-proof-progress-bar"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Utility Bill (Proof of Address)</label>
+                            <div class="doc-upload" id="utility-bill-upload" onclick="document.getElementById('utility-bill').click()">
+                                <i class="fa-solid fa-file-invoice"></i>
+                                <div class="doc-upload-text">Click to upload utility bill</div>
+                            </div>
+                            <input type="file" id="utility-bill" accept="image/*,.pdf" style="display: none;" onchange="handleFileUpload(this, 'utility-bill-upload')">
+                            <div class="upload-progress" id="utility-bill-progress">
+                                <div class="upload-progress-bar" id="utility-bill-progress-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="form-navigation">
                         <button class="btn-secondary" onclick="previousStep(2)">Previous</button>
                         <button class="btn-primary" onclick="validateStep(3)">Next</button>
@@ -1859,7 +2919,7 @@
                 </div>
             </div>
             
-            <!-- Step 4: Next of Kin -->
+            <!-- Step 4: Next of Kin & Guarantor -->
             <div id="step4-content" class="step-content hidden">
                 <div class="floating-form">
                     <div class="form-group">
@@ -1913,6 +2973,44 @@
                         </div>
                     </div>
                     
+                    <!-- NEW: Guarantor Section -->
+                    <div class="guarantor-section">
+                        <h4>Guarantor Information (Optional)</h4>
+                        <div class="form-group">
+                            <label class="form-label">Guarantor Full Name</label>
+                            <input type="text" class="form-input" id="guarantor-name" placeholder="Guarantor's full name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Guarantor Relationship</label>
+                            <select class="form-select" id="guarantor-relationship">
+                                <option value="">Select relationship</option>
+                                <option>Spouse</option>
+                                <option>Parent</option>
+                                <option>Sibling</option>
+                                <option>Friend</option>
+                                <option>Colleague</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Guarantor Phone</label>
+                                <input type="tel" class="form-input" id="guarantor-phone" placeholder="+260 XXX XXX XXX">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Guarantor Email</label>
+                                <input type="email" class="form-input" id="guarantor-email" placeholder="guarantor@email.com">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Guarantor Address</label>
+                            <input type="text" class="form-input" id="guarantor-address" placeholder="Guarantor's address">
+                        </div>
+                    </div>
+                    
                     <div class="form-navigation">
                         <button class="btn-secondary" onclick="previousStep(3)">Previous</button>
                         <button class="btn-primary" onclick="validateStep(4)">Next</button>
@@ -1925,47 +3023,141 @@
                 <div class="floating-form">
                     <h3 style="margin-top: 0;">Review Your Application</h3>
                     
-                    <div class="form-group">
-                        <label class="form-label">Personal Information</label>
-                        <div style="background: var(--grey-light); padding: 14px; border-radius: var(--radius); font-size: 13px;">
-                            <div><strong>Name:</strong> <span id="review-name">-</span></div>
-                            <div><strong>Phone:</strong> <span id="review-phone">-</span></div>
-                            <div><strong>Email:</strong> <span id="review-email">-</span></div>
-                            <div><strong>Date of Birth:</strong> <span id="review-dob">-</span></div>
-                            <div><strong>National ID:</strong> <span id="review-national-id">-</span></div>
-                            <div><strong>Address:</strong> <span id="review-address">-</span></div>
-                            <div><strong>City:</strong> <span id="review-city">-</span></div>
+                    <div class="application-summary">
+                        <div class="summary-section">
+                            <div class="summary-section-title">Personal Information</div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Name:</div>
+                                <div class="summary-item-value" id="review-name">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Phone:</div>
+                                <div class="summary-item-value" id="review-phone">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Email:</div>
+                                <div class="summary-item-value" id="review-email">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Date of Birth:</div>
+                                <div class="summary-item-value" id="review-dob">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">National ID:</div>
+                                <div class="summary-item-value" id="review-national-id">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Address:</div>
+                                <div class="summary-item-value" id="review-address">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">City:</div>
+                                <div class="summary-item-value" id="review-city">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Employment Status:</div>
+                                <div class="summary-item-value" id="review-employment">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Monthly Income:</div>
+                                <div class="summary-item-value" id="review-income">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Employer:</div>
+                                <div class="summary-item-value" id="review-employer">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Occupation:</div>
+                                <div class="summary-item-value" id="review-occupation">-</div>
+                            </div>
+                        </div>
+                        
+                        <div class="summary-section">
+                            <div class="summary-section-title">Loan Details</div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Amount:</div>
+                                <div class="summary-item-value" id="review-loan-amount">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Term:</div>
+                                <div class="summary-item-value" id="review-term">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Interest Rate:</div>
+                                <div class="summary-item-value" id="review-interest">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Total Repayment:</div>
+                                <div class="summary-item-value" id="review-total">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Reason:</div>
+                                <div class="summary-item-value" id="review-reason">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Purpose:</div>
+                                <div class="summary-item-value" id="review-purpose">-</div>
+                            </div>
+                        </div>
+                        
+                        <div class="summary-section">
+                            <div class="summary-section-title">Collateral Information</div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Type:</div>
+                                <div class="summary-item-value" id="review-collateral">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Description:</div>
+                                <div class="summary-item-value" id="review-collateral-desc">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Estimated Value:</div>
+                                <div class="summary-item-value" id="review-collateral-value">-</div>
+                            </div>
+                        </div>
+                        
+                        <div class="summary-section">
+                            <div class="summary-section-title">Next of Kin</div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Name:</div>
+                                <div class="summary-item-value" id="review-kin-name">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Relationship:</div>
+                                <div class="summary-item-value" id="review-kin-relationship">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Phone:</div>
+                                <div class="summary-item-value" id="review-kin-phone">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Email:</div>
+                                <div class="summary-item-value" id="review-kin-email">-</div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-label">Address:</div>
+                                <div class="summary-item-value" id="review-kin-address">-</div>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label class="form-label">Loan Details</label>
-                        <div style="background: var(--grey-light); padding: 14px; border-radius: var(--radius); font-size: 13px;">
-                            <div><strong>Amount:</strong> <span id="review-loan-amount">-</span></div>
-                            <div><strong>Term:</strong> <span id="review-term">-</span></div>
-                            <div><strong>Interest Rate:</strong> <span id="review-interest">-</span></div>
-                            <div><strong>Total Repayment:</strong> <span id="review-total">-</span></div>
-                            <div><strong>Reason:</strong> <span id="review-reason">-</span></div>
-                        </div>
+                    <div class="application-fee">
+                        <div class="fee-amount">K50 Application Fee</div>
+                        <div>This fee will be deducted from your loan amount upon approval</div>
                     </div>
                     
-                    <div class="form-group">
-                        <label class="form-label">Collateral Information</label>
-                        <div style="background: var(--grey-light); padding: 14px; border-radius: var(--radius); font-size: 13px;">
-                            <div><strong>Type:</strong> <span id="review-collateral">-</span></div>
-                            <div><strong>Description:</strong> <span id="review-collateral-desc">-</span></div>
-                            <div><strong>Estimated Value:</strong> <span id="review-collateral-value">-</span></div>
+                    <div class="application-tips">
+                        <div class="tip-item">
+                            <div class="tip-icon"><i class="fa-solid fa-lightbulb"></i></div>
+                            <div class="tip-content">Ensure all information provided is accurate to avoid delays in processing</div>
                         </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Next of Kin</label>
-                        <div style="background: var(--grey-light); padding: 14px; border-radius: var(--radius); font-size: 13px;">
-                            <div><strong>Name:</strong> <span id="review-kin-name">-</span></div>
-                            <div><strong>Relationship:</strong> <span id="review-kin-relationship">-</span></div>
-                            <div><strong>Phone:</strong> <span id="review-kin-phone">-</span></div>
-                            <div><strong>Email:</strong> <span id="review-kin-email">-</span></div>
-                            <div><strong>Address:</strong> <span id="review-kin-address">-</span></div>
+                        <div class="tip-item">
+                            <div class="tip-icon"><i class="fa-solid fa-lightbulb"></i></div>
+                            <div class="tip-content">Your application will be processed within 24-48 hours</div>
+                        </div>
+                        <div class="tip-item">
+                            <div class="tip-icon"><i class="fa-solid fa-lightbulb"></i></div>
+                            <div class="tip-content">You will receive notifications about your application status</div>
                         </div>
                     </div>
                     
@@ -1973,7 +3165,7 @@
                         <div style="display: flex; align-items: flex-start; gap: 10px;">
                             <input type="checkbox" id="agree-terms" style="margin-top: 3px;">
                             <label for="agree-terms" style="font-size: 13px;">
-                                I agree to the <a href="#" style="color: var(--primary);">Terms and Conditions</a> and confirm that all information provided is accurate.
+                                I agree to the <a href="#" style="color: var(--primary);" onclick="showTermsModal()">Terms and Conditions</a> and confirm that all information provided is accurate.
                             </label>
                         </div>
                         <div class="error-message" id="agree-terms-error">You must agree to the terms and conditions</div>
@@ -2086,6 +3278,23 @@
                 </div>
                 <button class="copy-btn" onclick="copyReferralCode()">Copy</button>
             </div>
+            
+            <!-- NEW: Credit Score Display -->
+            <div class="credit-score-display">
+                <div class="score-circle">
+                    <div class="score-value" id="credit-score-value">720</div>
+                </div>
+                <div class="score-label">Your Credit Score</div>
+            </div>
+            
+            <!-- NEW: Application Security -->
+            <div class="application-security">
+                <div class="security-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div class="security-title">Your Information is Secure</div>
+                <div class="security-text">We use bank-level encryption to protect your personal and financial data</div>
+            </div>
         </div>
     </main>
 
@@ -2133,7 +3342,7 @@
                 <i class="fa-solid fa-credit-card"></i>
                 <span>Payments</span>
             </div>
-            <div class="panel-item" onclick="closePanel()">
+            <div class="panel-item" onclick="showTermsModal(); closePanel()">
                 <i class="fa-solid fa-file-contract"></i>
                 <span>Terms & Conditions</span>
             </div>
@@ -2169,6 +3378,40 @@
         </div>
     </div>
 
+    <!-- Terms and Conditions Modal -->
+    <div class="terms-modal" id="terms-modal">
+        <div class="modal-header">
+            <div class="modal-title">Terms and Conditions</div>
+            <button class="close-modal" id="close-terms-modal">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-content">
+            <p>By applying for a loan with DMK Money Solution, you agree to the following terms and conditions:</p>
+            
+            <h4>1. Loan Agreement</h4>
+            <p>You understand that this is a legally binding agreement and you are responsible for repaying the loan amount plus interest and fees according to the agreed schedule.</p>
+            
+            <h4>2. Interest Rates and Fees</h4>
+            <p>Interest rates range from 20% to 50% depending on the loan term. A K50 processing fee applies to all loans.</p>
+            
+            <h4>3. Repayment</h4>
+            <p>You agree to make timely repayments as per the schedule. Late payments may incur additional fees and affect your credit score.</p>
+            
+            <h4>4. Collateral</h4>
+            <p>You understand that the collateral provided may be seized in case of default on loan repayment.</p>
+            
+            <h4>5. Data Privacy</h4>
+            <p>We collect and process your personal information in accordance with our privacy policy and applicable data protection laws.</p>
+            
+            <h4>6. Credit Assessment</h4>
+            <p>You consent to us conducting credit checks and assessments as part of the loan application process.</p>
+            
+            <p>By proceeding with your application, you confirm that you have read, understood, and agree to these terms and conditions.</p>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-overlay"></div>
     <div class="overlay" id="overlay"></div>
 
     <script>
@@ -2185,10 +3428,25 @@
         };
 
         // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
+        try {
+            firebase.initializeApp(firebaseConfig);
+        } catch (error) {
+            console.log("Firebase already initialized");
+        }
+        
         const db = firebase.firestore();
         const storage = firebase.storage();
         const auth = firebase.auth();
+        
+        // Enable offline persistence for Firestore
+        db.enablePersistence()
+          .catch((err) => {
+              if (err.code == 'failed-precondition') {
+                  console.log("Multiple tabs open, persistence can only be enabled in one tab at a time.");
+              } else if (err.code == 'unimplemented') {
+                  console.log("The current browser doesn't support persistence");
+              }
+          });
         
         // Application state
         let currentUser = null;
@@ -2198,6 +3456,7 @@
             loanDetails: {},
             collateralInfo: {},
             nextOfKin: {},
+            guarantor: {},
             documents: {}
         };
         let uploadedFiles = {};
@@ -2207,8 +3466,12 @@
         let userStats = {
             totalLoans: 0,
             activeLoans: 0,
-            creditScore: '-',
-            referralEarnings: 0
+            creditScore: 720,
+            referralEarnings: 0,
+            nextPayment: 0,
+            dueDate: '-',
+            interestRate: '0%',
+            availableLimit: 6000
         };
 
         // Check authentication state
@@ -2221,6 +3484,22 @@
                 currentUser = null;
                 showPage('auth-page');
             }
+        });
+
+        // Monitor connection status
+        firebase.firestore().enableNetwork()
+          .then(() => {
+              // Online
+              document.getElementById('offline-indicator').classList.remove('show');
+          })
+          .catch((error) => {
+              console.log("Error enabling network:", error);
+          });
+
+        // Listen for connection state changes
+        firebase.firestore().onSnapshotsInSync(() => {
+            // Online
+            document.getElementById('offline-indicator').classList.remove('show');
         });
 
         // Authentication functions
@@ -2265,7 +3544,14 @@
                         phone: phone,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                         referralCode: generateReferralCode(),
-                        creditScore: 650 // Default credit score
+                        creditScore: 650, // Default credit score
+                        employmentStatus: '',
+                        monthlyIncome: 0,
+                        employerName: '',
+                        occupation: '',
+                        bankName: '',
+                        accountNumber: '',
+                        branchCode: ''
                     });
                 })
                 .then(() => {
@@ -2306,6 +3592,7 @@
             if (pageId === 'home-page') {
                 document.querySelectorAll('.nav-item')[0].classList.add('active');
                 loadUserStats();
+                updateDashboardWidgets();
             } else if (pageId === 'loans-page') {
                 document.querySelectorAll('.nav-item')[1].classList.add('active');
                 loadUserLoans();
@@ -2369,6 +3656,20 @@
             document.getElementById('overlay').classList.remove('active');
         });
         
+        // Terms modal
+        document.getElementById('close-terms-modal').addEventListener('click', closeTermsModal);
+        document.getElementById('modal-overlay').addEventListener('click', closeTermsModal);
+        
+        function showTermsModal() {
+            document.getElementById('terms-modal').classList.add('show');
+            document.getElementById('modal-overlay').classList.add('active');
+        }
+        
+        function closeTermsModal() {
+            document.getElementById('terms-modal').classList.remove('show');
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        
         // Multi-step application form
         function nextStep(step) {
             document.getElementById('step' + currentStep + '-content').classList.add('hidden');
@@ -2413,6 +3714,7 @@
                 loanDetails: {},
                 collateralInfo: {},
                 nextOfKin: {},
+                guarantor: {},
                 documents: {}
             };
             uploadedFiles = {};
@@ -2433,6 +3735,11 @@
             
             // Reset collateral selection
             document.querySelectorAll('.collateral-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // Reset purpose selection
+            document.querySelectorAll('.purpose-item').forEach(item => {
                 item.classList.remove('selected');
             });
             
@@ -2459,6 +3766,22 @@
                 
                 // Hide error message if shown
                 document.getElementById('collateral-type-error').style.display = 'none';
+            });
+        });
+        
+        // Purpose selection
+        document.querySelectorAll('.purpose-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.purpose-item').forEach(i => {
+                    i.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                
+                // Store the selected purpose
+                applicationData.loanDetails['loan-purpose'] = this.getAttribute('data-value');
+                
+                // Hide error message if shown
+                document.getElementById('loan-purpose-error').style.display = 'none';
             });
         });
         
@@ -2542,6 +3865,13 @@
                         errorMessage = 'Please enter a valid ID number';
                     }
                     break;
+                case 'income':
+                    const income = parseInt(value);
+                    if (isNaN(income) || income < 0) {
+                        isValid = false;
+                        errorMessage = 'Please enter a valid income amount';
+                    }
+                    break;
             }
             
             if (isValid) {
@@ -2565,10 +3895,15 @@
         function getFieldCategory(fieldId) {
             if (fieldId.includes('kin-')) {
                 return 'nextOfKin';
-            } else if (fieldId.includes('loan-') || fieldId === 'repayment-period' || fieldId === 'loan-reason') {
+            } else if (fieldId.includes('guarantor-')) {
+                return 'guarantor';
+            } else if (fieldId.includes('loan-') || fieldId === 'repayment-period' || fieldId === 'loan-reason' || fieldId === 'loan-purpose') {
                 return 'loanDetails';
             } else if (fieldId.includes('collateral-')) {
                 return 'collateralInfo';
+            } else if (fieldId.includes('employment-') || fieldId.includes('monthly-income') || fieldId.includes('employer-') || fieldId === 'occupation' || 
+                      fieldId.includes('bank-') || fieldId.includes('account-') || fieldId.includes('branch-')) {
+                return 'personalInfo';
             } else {
                 return 'personalInfo';
             }
@@ -2587,7 +3922,9 @@
                         { id: 'dob', type: 'date' },
                         { id: 'national-id', type: 'id' },
                         { id: 'address', type: 'address' },
-                        { id: 'city', type: 'name' }
+                        { id: 'city', type: 'name' },
+                        { id: 'employment-status', type: 'select' },
+                        { id: 'monthly-income', type: 'income' }
                     ];
                     
                     step1Fields.forEach(field => {
@@ -2619,6 +3956,15 @@
                             isValid = false;
                         }
                     });
+                    
+                    // Validate purpose selection
+                    if (!applicationData.loanDetails['loan-purpose']) {
+                        document.getElementById('loan-purpose-error').style.display = 'block';
+                        isValid = false;
+                    } else {
+                        document.getElementById('loan-purpose-error').style.display = 'none';
+                    }
+                    
                     break;
                     
                 case 3:
@@ -2781,11 +4127,11 @@
             
             let interestRate;
             switch(period) {
-                case 1: interestRate = 0.20; break;
-                case 2: interestRate = 0.25; break;
-                case 3: interestRate = 0.30; break;
-                case 4: interestRate = 0.35; break;
-                case 8: interestRate = 0.50; break;
+                case 7: interestRate = 0.20; break;
+                case 14: interestRate = 0.25; break;
+                case 21: interestRate = 0.30; break;
+                case 30: interestRate = 0.35; break;
+                case 60: interestRate = 0.50; break;
                 default: interestRate = 0.35;
             }
             
@@ -2844,12 +4190,17 @@
             document.getElementById('review-national-id').textContent = applicationData.personalInfo['national-id'] || '-';
             document.getElementById('review-address').textContent = applicationData.personalInfo.address || '-';
             document.getElementById('review-city').textContent = applicationData.personalInfo.city || '-';
+            document.getElementById('review-employment').textContent = applicationData.personalInfo['employment-status'] || '-';
+            document.getElementById('review-income').textContent = 'K' + (applicationData.personalInfo['monthly-income'] || '0');
+            document.getElementById('review-employer').textContent = applicationData.personalInfo['employer-name'] || '-';
+            document.getElementById('review-occupation').textContent = applicationData.personalInfo.occupation || '-';
             
             document.getElementById('review-loan-amount').textContent = 'K' + (applicationData.loanDetails.amount || '0');
             document.getElementById('review-term').textContent = getTermText(applicationData.loanDetails.period);
             document.getElementById('review-interest').textContent = (applicationData.loanDetails.interestRate * 100 || '0') + '%';
             document.getElementById('review-total').textContent = 'K' + (applicationData.loanDetails.totalRepayment || '0');
             document.getElementById('review-reason').textContent = applicationData.loanDetails['loan-reason'] || '-';
+            document.getElementById('review-purpose').textContent = applicationData.loanDetails['loan-purpose'] || '-';
             
             document.getElementById('review-collateral').textContent = applicationData.collateralInfo['collateral-type'] || '-';
             document.getElementById('review-collateral-desc').textContent = applicationData.collateralInfo['collateral-description'] || '-';
@@ -2961,6 +4312,11 @@
             } catch (error) {
                 console.error('Error submitting application:', error);
                 showToast('Error submitting application. Please try again.', 'error');
+                
+                // Check if it's an offline error
+                if (error.code === 'unavailable') {
+                    document.getElementById('offline-indicator').classList.add('show');
+                }
             } finally {
                 // Restore button state
                 submitBtn.innerHTML = originalText;
@@ -3117,6 +4473,21 @@
                     document.getElementById('profile-dob-input').value = userData.dob || '';
                     document.getElementById('profile-id-input').value = userData.nationalId || '';
                     document.getElementById('referral-code').textContent = userData.referralCode || 'DMK-5A8B2C';
+                    document.getElementById('credit-score-value').textContent = userData.creditScore || '720';
+                    
+                    // Update application data with profile info
+                    applicationData.personalInfo['full-name'] = userData.name || '';
+                    applicationData.personalInfo['phone-number'] = userData.phone || '';
+                    applicationData.personalInfo.email = userData.email || '';
+                    applicationData.personalInfo.dob = userData.dob || '';
+                    applicationData.personalInfo['national-id'] = userData.nationalId || '';
+                    applicationData.personalInfo['employment-status'] = userData.employmentStatus || '';
+                    applicationData.personalInfo['monthly-income'] = userData.monthlyIncome || '';
+                    applicationData.personalInfo['employer-name'] = userData.employerName || '';
+                    applicationData.personalInfo.occupation = userData.occupation || '';
+                    applicationData.personalInfo['bank-name'] = userData.bankName || '';
+                    applicationData.personalInfo['account-number'] = userData.accountNumber || '';
+                    applicationData.personalInfo['branch-code'] = userData.branchCode || '';
                 }
             } catch (error) {
                 console.error('Error loading user profile:', error);
@@ -3134,12 +4505,20 @@
                 
                 document.getElementById('total-loans').textContent = totalLoans;
                 document.getElementById('active-loans').textContent = activeLoans;
-                document.getElementById('credit-score').textContent = '720';
+                document.getElementById('credit-score').textContent = userStats.creditScore;
                 document.getElementById('referral-earnings').textContent = 'K' + (userStats.referralEarnings || '0');
                 
             } catch (error) {
                 console.error('Error loading user stats:', error);
             }
+        }
+        
+        // Update dashboard widgets
+        function updateDashboardWidgets() {
+            document.getElementById('next-payment').textContent = 'K' + userStats.nextPayment;
+            document.getElementById('due-date').textContent = userStats.dueDate;
+            document.getElementById('interest-rate').textContent = userStats.interestRate;
+            document.getElementById('available-limit').textContent = 'K' + userStats.availableLimit.toLocaleString();
         }
         
         // Load payment data
