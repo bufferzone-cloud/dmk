@@ -8,16 +8,20 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <style>
         :root {
             --primary: #1a73e8;
             --primary-light: #e8f0fe;
             --primary-dark: #0d47a1;
+            --secondary: #ff6d00;
+            --secondary-light: #ffe0b2;
             --text-dark: #202124;
             --text-light: #5f6368;
             --white: #ffffff;
             --grey-light: #f8f9fa;
             --grey: #dadce0;
+            --grey-dark: #5f6368;
             --success: #0f9d58;
             --warning: #f4b400;
             --error: #ea4335;
@@ -25,6 +29,7 @@
             --radius-large: 12px;
             --shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
             --shadow-medium: 0 3px 10px rgba(0, 0, 0, 0.12);
+            --shadow-large: 0 6px 20px rgba(0, 0, 0, 0.15);
             --transition: all 0.3s ease;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
         }
@@ -108,6 +113,22 @@
             cursor: pointer;
             transition: var(--transition);
             border: none;
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: var(--error);
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .notification-icon:hover, .menu-toggle:hover {
@@ -141,6 +162,10 @@
             transition: var(--transition);
         }
 
+        .card:hover {
+            box-shadow: var(--shadow-medium);
+        }
+
         .loan-card {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
@@ -152,27 +177,42 @@
             overflow: hidden;
         }
 
+        .loan-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(30deg);
+        }
+
         .loan-card h2 {
             margin: 0 0 6px;
             font-size: 17px;
             font-weight: 600;
+            position: relative;
         }
 
         .loan-card p {
             margin: 0 0 14px;
             font-size: 13px;
             opacity: 0.9;
+            position: relative;
         }
 
         .loan-amount {
             font-size: 24px;
             font-weight: 700;
             margin: 0 0 6px;
+            position: relative;
         }
 
         .loan-range {
             font-size: 13px;
             opacity: 0.8;
+            position: relative;
         }
 
         .interest-grid {
@@ -180,6 +220,7 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
             margin-top: 14px;
+            position: relative;
         }
 
         .interest-item {
@@ -187,11 +228,13 @@
             border-radius: var(--radius);
             padding: 10px;
             text-align: center;
+            backdrop-filter: blur(10px);
             transition: var(--transition);
         }
 
         .interest-item:hover {
             background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
         }
 
         .interest-period {
@@ -221,6 +264,7 @@
             text-align: center;
             box-shadow: var(--shadow);
             transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.04);
         }
 
         .feature-item:hover {
@@ -267,6 +311,13 @@
             background: var(--primary-dark);
             transform: translateY(-2px);
             box-shadow: var(--shadow-medium);
+        }
+
+        .apply-btn:disabled {
+            background: var(--grey);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .contact-card {
@@ -371,6 +422,27 @@
             box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
         }
 
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--grey);
+            border-radius: var(--radius);
+            font-size: 14px;
+            background-color: var(--white);
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23666' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 10px;
+            transition: var(--transition);
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+        }
+
         .form-row {
             display: flex;
             gap: 12px;
@@ -423,6 +495,10 @@
         .step.active .step-circle {
             background: var(--primary);
             box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
+        }
+
+        .step.completed .step-circle {
+            background: var(--success);
         }
 
         .step-label {
@@ -615,6 +691,13 @@
             box-shadow: var(--shadow-medium);
         }
 
+        .btn-primary:disabled {
+            background: var(--grey);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
         .amount-input-container {
             position: relative;
             margin-bottom: 16px;
@@ -670,6 +753,7 @@
 
         .floating-form {
             background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
             border-radius: var(--radius-large);
             padding: 18px;
             box-shadow: var(--shadow-medium);
@@ -726,6 +810,7 @@
             margin-bottom: 14px;
             box-shadow: var(--shadow);
             transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.04);
         }
 
         .loan-item:hover {
@@ -824,6 +909,273 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        .referral-banner {
+            background: linear-gradient(135deg, var(--secondary) 0%, #ff9800 100%);
+            color: white;
+            border-radius: var(--radius-large);
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .referral-banner i {
+            font-size: 24px;
+        }
+
+        .referral-content h3 {
+            margin: 0 0 5px;
+            font-size: 16px;
+        }
+
+        .referral-content p {
+            margin: 0;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .loan-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: var(--warning);
+            color: white;
+        }
+
+        .status-approved {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-rejected {
+            background: var(--error);
+            color: white;
+        }
+
+        .status-completed {
+            background: var(--primary);
+            color: white;
+        }
+
+        .side-panel {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 260px;
+            height: 100%;
+            background: var(--white);
+            box-shadow: -2px 0 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .side-panel.open {
+            right: 0;
+        }
+
+        .panel-header {
+            padding: 20px 16px;
+            border-bottom: 1px solid var(--grey);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--grey-light);
+        }
+
+        .panel-header h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .close-panel {
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .close-panel:hover {
+            background: var(--grey);
+        }
+
+        .panel-content {
+            padding: 16px;
+        }
+
+        .panel-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--grey-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .panel-item:hover {
+            background: var(--grey-light);
+            border-radius: var(--radius);
+            padding-left: 8px;
+        }
+
+        .panel-item i {
+            margin-right: 12px;
+            color: var(--primary);
+            width: 18px;
+            text-align: center;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .notification-panel {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 260px;
+            height: 100%;
+            background: var(--white);
+            box-shadow: -2px 0 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .notification-panel.open {
+            right: 0;
+        }
+
+        .notification-item {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--grey-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .notification-item:hover {
+            background: var(--grey-light);
+        }
+
+        .notification-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .notification-message {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 6px;
+        }
+
+        .notification-time {
+            font-size: 11px;
+            color: var(--grey-dark);
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 70px;
+            right: 16px;
+            width: 54px;
+            height: 54px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: var(--shadow-large);
+            cursor: pointer;
+            z-index: 90;
+            transition: var(--transition);
+        }
+
+        .floating-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: var(--shadow-large);
+        }
+
+        .repayment-schedule {
+            margin-top: 16px;
+        }
+
+        .schedule-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--grey-light);
+        }
+
+        .schedule-item:last-child {
+            border-bottom: none;
+        }
+
+        .schedule-date {
+            font-weight: 500;
+        }
+
+        .schedule-amount {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .calculator-card {
+            background: var(--white);
+            border-radius: var(--radius-large);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+        }
+
+        .calculator-result {
+            text-align: center;
+            padding: 16px;
+            background: var(--primary-light);
+            border-radius: var(--radius);
+            margin-top: 16px;
+        }
+
+        .result-amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .result-label {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body>
@@ -837,10 +1189,11 @@
                 </div>
             </div>
             <div class="header-actions">
-                <div class="notification-icon">
+                <div class="notification-icon" id="notification-toggle">
                     <i class="fa-solid fa-bell"></i>
+                    <div class="notification-badge" id="notification-count" style="display: none;">0</div>
                 </div>
-                <button class="menu-toggle">
+                <button class="menu-toggle" id="menu-toggle">
                     <i class="fa-solid fa-bars"></i>
                 </button>
             </div>
@@ -850,6 +1203,14 @@
     <main>
         <!-- Home Page -->
         <div id="home-page" class="page">
+            <div class="referral-banner">
+                <i class="fa-solid fa-gift"></i>
+                <div class="referral-content">
+                    <h3>Refer & Earn 5% Bonus!</h3>
+                    <p>Invite friends and get cash rewards when they apply for a loan</p>
+                </div>
+            </div>
+
             <div class="loan-card">
                 <h2>Quick Loan Options</h2>
                 <p>Get instant cash when you need it most</p>
@@ -869,6 +1230,28 @@
                         <div class="interest-period">1 Month</div>
                         <div class="interest-rate">35%</div>
                     </div>
+                </div>
+            </div>
+
+            <div class="calculator-card">
+                <h3 class="section-title"><i class="fa-solid fa-calculator"></i> Loan Calculator</h3>
+                <div class="form-group">
+                    <label class="form-label">Loan Amount (K)</label>
+                    <input type="number" class="form-input" id="calc-amount" min="100" max="6000" value="2500" oninput="calculateLoan()">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Repayment Period</label>
+                    <select class="form-select" id="calc-period" onchange="calculateLoan()">
+                        <option value="1">1 Week</option>
+                        <option value="2">2 Weeks</option>
+                        <option value="3">3 Weeks</option>
+                        <option value="4" selected>1 Month</option>
+                        <option value="8">2 Months</option>
+                    </select>
+                </div>
+                <div class="calculator-result">
+                    <div class="result-amount" id="calc-total">K3,425</div>
+                    <div class="result-label">Total Repayment Amount</div>
                 </div>
             </div>
 
@@ -906,7 +1289,9 @@
                 <strong>Contact Us</strong>
                 <div class="contact-info">
                     House #39 Chiyele Rd, Chilenje South<br>
-                    <strong>Phone:</strong> +260 777 602240 / +260 954 035914
+                    <strong>Phone:</strong> +260 777 602240 / +260 954 035914<br>
+                    <strong>Email:</strong> info@dmkmoney.co.zm<br>
+                    <strong>Hours:</strong> Mon-Fri 8:00 AM - 5:00 PM
                 </div>
             </div>
         </div>
@@ -956,10 +1341,14 @@
                 </div>
                 <div class="step" id="step3">
                     <div class="step-circle">3</div>
-                    <div class="step-label">Next of Kin</div>
+                    <div class="step-label">Collateral</div>
                 </div>
                 <div class="step" id="step4">
                     <div class="step-circle">4</div>
+                    <div class="step-label">Next of Kin</div>
+                </div>
+                <div class="step" id="step5">
+                    <div class="step-circle">5</div>
                     <div class="step-label">Review</div>
                 </div>
             </div>
@@ -997,52 +1386,27 @@
                     </div>
                     
                     <div class="form-group">
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" class="form-input" id="dob">
+                        <div class="error-message" id="dob-error">Date of birth is required</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">National ID Number</label>
+                        <input type="text" class="form-input" id="national-id" placeholder="Enter your national ID">
+                        <div class="error-message" id="national-id-error">National ID is required</div>
+                    </div>
+                    
+                    <div class="form-group">
                         <label class="form-label">Address</label>
                         <input type="text" class="form-input" id="address" placeholder="Enter your address">
                         <div class="error-message" id="address-error">Address is required</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Choose Collateral</label>
-                        <div class="collateral-grid" id="collateral-grid">
-                            <div class="collateral-item" data-value="Cars">
-                                <div class="collateral-icon"><i class="fa-solid fa-car"></i></div>
-                                <div class="collateral-name">Cars</div>
-                            </div>
-                            <div class="collateral-item" data-value="Motorbikes">
-                                <div class="collateral-icon"><i class="fa-solid fa-motorcycle"></i></div>
-                                <div class="collateral-name">Motorbikes</div>
-                            </div>
-                            <div class="collateral-item" data-value="Laptops">
-                                <div class="collateral-icon"><i class="fa-solid fa-laptop"></i></div>
-                                <div class="collateral-name">Laptops</div>
-                            </div>
-                            <div class="collateral-item" data-value="Smartphones">
-                                <div class="collateral-icon"><i class="fa-solid fa-mobile-screen"></i></div>
-                                <div class="collateral-name">Smartphones</div>
-                            </div>
-                        </div>
-                        <div class="error-message" id="collateral-type-error">Collateral type is required</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Upload NRC Front</label>
-                        <div class="doc-upload" id="nrc-front-upload" onclick="document.getElementById('nrc-front').click()">
-                            <i class="fa-solid fa-id-card"></i>
-                            <div class="doc-upload-text">Click to upload NRC front</div>
-                        </div>
-                        <input type="file" id="nrc-front" accept="image/*" style="display: none;" onchange="handleFileUpload(this, 'nrc-front-upload')">
-                        <div class="error-message" id="nrc-front-error">NRC front photo is required</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Upload NRC Back</label>
-                        <div class="doc-upload" id="nrc-back-upload" onclick="document.getElementById('nrc-back').click()">
-                            <i class="fa-solid fa-id-card"></i>
-                            <div class="doc-upload-text">Click to upload NRC back</div>
-                        </div>
-                        <input type="file" id="nrc-back" accept="image/*" style="display: none;" onchange="handleFileUpload(this, 'nrc-back-upload')">
-                        <div class="error-message" id="nrc-back-error">NRC back photo is required</div>
+                        <label class="form-label">City/Town</label>
+                        <input type="text" class="form-input" id="city" placeholder="Enter your city">
+                        <div class="error-message" id="city-error">City is required</div>
                     </div>
                     
                     <div class="form-navigation">
@@ -1069,12 +1433,12 @@
                     
                     <div class="form-group">
                         <label class="form-label">Repayment Period</label>
-                        <select class="form-input" id="repayment-period" onchange="calculateRepayment()">
-                            <option value="1">1 Week</option>
-                            <option value="2">2 Weeks</option>
-                            <option value="3">3 Weeks</option>
-                            <option value="4" selected>1 Month</option>
-                            <option value="8">2 Months</option>
+                        <select class="form-select" id="repayment-period" onchange="calculateRepayment()">
+                            <option value="7">1 Week</option>
+                            <option value="14">2 Weeks</option>
+                            <option value="21">3 Weeks</option>
+                            <option value="30" selected>1 Month</option>
+                            <option value="60">2 Months</option>
                         </select>
                     </div>
                     
@@ -1101,6 +1465,13 @@
                         </div>
                     </div>
                     
+                    <div class="repayment-schedule">
+                        <h4>Repayment Schedule</h4>
+                        <div id="repayment-schedule-list">
+                            <!-- Repayment schedule will be populated here -->
+                        </div>
+                    </div>
+                    
                     <div class="form-group">
                         <label class="form-label">Reason for Loan</label>
                         <textarea class="form-input" id="loan-reason" rows="3" placeholder="Explain why you need this loan"></textarea>
@@ -1114,8 +1485,126 @@
                 </div>
             </div>
             
-            <!-- Step 3: Next of Kin -->
+            <!-- Step 3: Collateral Information -->
             <div id="step3-content" class="step-content hidden">
+                <div class="floating-form">
+                    <div class="form-group">
+                        <label class="form-label">Choose Collateral Type</label>
+                        <div class="collateral-grid" id="collateral-grid">
+                            <div class="collateral-item" data-value="Cars">
+                                <div class="collateral-icon"><i class="fa-solid fa-car"></i></div>
+                                <div class="collateral-name">Cars</div>
+                            </div>
+                            <div class="collateral-item" data-value="Motorbikes">
+                                <div class="collateral-icon"><i class="fa-solid fa-motorcycle"></i></div>
+                                <div class="collateral-name">Motorbikes</div>
+                            </div>
+                            <div class="collateral-item" data-value="Laptops">
+                                <div class="collateral-icon"><i class="fa-solid fa-laptop"></i></div>
+                                <div class="collateral-name">Laptops</div>
+                            </div>
+                            <div class="collateral-item" data-value="Smartphones">
+                                <div class="collateral-icon"><i class="fa-solid fa-mobile-screen"></i></div>
+                                <div class="collateral-name">Smartphones</div>
+                            </div>
+                            <div class="collateral-item" data-value="Fridges">
+                                <div class="collateral-icon"><i class="fa-solid fa-temperature-low"></i></div>
+                                <div class="collateral-name">Fridges</div>
+                            </div>
+                            <div class="collateral-item" data-value="TVs">
+                                <div class="collateral-icon"><i class="fa-solid fa-tv"></i></div>
+                                <div class="collateral-name">TVs</div>
+                            </div>
+                            <div class="collateral-item" data-value="Sound systems">
+                                <div class="collateral-icon"><i class="fa-solid fa-volume-high"></i></div>
+                                <div class="collateral-name">Sound Systems</div>
+                            </div>
+                            <div class="collateral-item" data-value="Game consoles">
+                                <div class="collateral-icon"><i class="fa-solid fa-gamepad"></i></div>
+                                <div class="collateral-name">Game Consoles</div>
+                            </div>
+                        </div>
+                        <div class="error-message" id="collateral-type-error">Collateral type is required</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Description of Collateral</label>
+                        <textarea class="form-input" id="collateral-description" rows="3" placeholder="Describe your collateral in detail (brand, model, condition, etc.)"></textarea>
+                        <div class="error-message" id="collateral-description-error">Collateral description is required</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Estimated Value (K)</label>
+                        <input type="number" class="form-input" id="collateral-value" placeholder="Estimated value of collateral">
+                        <div class="error-message" id="collateral-value-error">Collateral value is required</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Upload NRC Front</label>
+                        <div class="doc-upload" id="nrc-front-upload" onclick="document.getElementById('nrc-front').click()">
+                            <i class="fa-solid fa-id-card"></i>
+                            <div class="doc-upload-text">Click to upload NRC front</div>
+                        </div>
+                        <input type="file" id="nrc-front" accept="image/*" style="display: none;" onchange="handleFileUpload(this, 'nrc-front-upload')">
+                        <div class="error-message" id="nrc-front-error">NRC front photo is required</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Upload NRC Back</label>
+                        <div class="doc-upload" id="nrc-back-upload" onclick="document.getElementById('nrc-back').click()">
+                            <i class="fa-solid fa-id-card"></i>
+                            <div class="doc-upload-text">Click to upload NRC back</div>
+                        </div>
+                        <input type="file" id="nrc-back" accept="image/*" style="display: none;" onchange="handleFileUpload(this, 'nrc-back-upload')">
+                        <div class="error-message" id="nrc-back-error">NRC back photo is required</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Upload Collateral Photos</label>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <div class="doc-upload" id="collateral-front-upload" onclick="document.getElementById('collateral-front').click()">
+                                    <i class="fa-solid fa-camera"></i>
+                                    <div class="doc-upload-text">Front View</div>
+                                </div>
+                                <input type="file" id="collateral-front" accept="image/*" style="display: none;" onchange="handleFileUpload(this, 'collateral-front-upload')">
+                            </div>
+                            <div class="form-group">
+                                <div class="doc-upload" id="collateral-back-upload" onclick="document.getElementById('collateral-back').click()">
+                                    <i class="fa-solid fa-camera"></i>
+                                    <div class="doc-upload-text">Back View</div>
+                                </div>
+                                <input type="file" id="collateral-back" accept="image/*" style="display: none;" onchange="handleFileUpload(this, 'collateral-back-upload')">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <div class="doc-upload" id="collateral-left-upload" onclick="document.getElementById('collateral-left').click()">
+                                    <i class="fa-solid fa-camera"></i>
+                                    <div class="doc-upload-text">Left Side</div>
+                                </div>
+                                <input type="file" id="collateral-left" accept="image/*" style="display: none;" onchange="handleFileUpload(this, 'collateral-left-upload')">
+                            </div>
+                            <div class="form-group">
+                                <div class="doc-upload" id="collateral-right-upload" onclick="document.getElementById('collateral-right').click()">
+                                    <i class="fa-solid fa-camera"></i>
+                                    <div class="doc-upload-text">Right Side</div>
+                                </div>
+                                <input type="file" id="collateral-right" accept="image/*" style="display: none;" onchange="handleFileUpload(this, 'collateral-right-upload')">
+                            </div>
+                        </div>
+                        <div class="error-message" id="collateral-photos-error">At least one collateral photo is required</div>
+                    </div>
+                    
+                    <div class="form-navigation">
+                        <button class="btn-secondary" onclick="previousStep(2)">Previous</button>
+                        <button class="btn-primary" onclick="validateStep(3)">Next</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 4: Next of Kin -->
+            <div id="step4-content" class="step-content hidden">
                 <div class="floating-form">
                     <div class="form-group">
                         <label class="form-label">Full Name</label>
@@ -1125,7 +1614,7 @@
                     
                     <div class="form-group">
                         <label class="form-label">Relationship</label>
-                        <select class="form-input" id="kin-relationship">
+                        <select class="form-select" id="kin-relationship">
                             <option value="">Select relationship</option>
                             <option>Spouse</option>
                             <option>Parent</option>
@@ -1156,15 +1645,24 @@
                         <div class="error-message" id="kin-address-error">Address is required</div>
                     </div>
                     
+                    <div class="form-group">
+                        <label class="form-label">Upload Next of Kin ID (Optional)</label>
+                        <div class="doc-upload" id="kin-id-upload" onclick="document.getElementById('kin-id').click()">
+                            <i class="fa-solid fa-id-card"></i>
+                            <div class="doc-upload-text">Click to upload ID</div>
+                        </div>
+                        <input type="file" id="kin-id" accept="image/*" style="display: none;" onchange="handleFileUpload(this, 'kin-id-upload')">
+                    </div>
+                    
                     <div class="form-navigation">
-                        <button class="btn-secondary" onclick="previousStep(2)">Previous</button>
-                        <button class="btn-primary" onclick="validateStep(3)">Next</button>
+                        <button class="btn-secondary" onclick="previousStep(3)">Previous</button>
+                        <button class="btn-primary" onclick="validateStep(4)">Next</button>
                     </div>
                 </div>
             </div>
             
-            <!-- Step 4: Review and Submit -->
-            <div id="step4-content" class="step-content hidden">
+            <!-- Step 5: Review and Submit -->
+            <div id="step5-content" class="step-content hidden">
                 <div class="floating-form">
                     <h3 style="margin-top: 0;">Review Your Application</h3>
                     
@@ -1174,8 +1672,10 @@
                             <div><strong>Name:</strong> <span id="review-name">-</span></div>
                             <div><strong>Phone:</strong> <span id="review-phone">-</span></div>
                             <div><strong>Email:</strong> <span id="review-email">-</span></div>
+                            <div><strong>Date of Birth:</strong> <span id="review-dob">-</span></div>
+                            <div><strong>National ID:</strong> <span id="review-national-id">-</span></div>
                             <div><strong>Address:</strong> <span id="review-address">-</span></div>
-                            <div><strong>Collateral:</strong> <span id="review-collateral">-</span></div>
+                            <div><strong>City:</strong> <span id="review-city">-</span></div>
                         </div>
                     </div>
                     
@@ -1184,9 +1684,18 @@
                         <div style="background: var(--grey-light); padding: 14px; border-radius: var(--radius); font-size: 13px;">
                             <div><strong>Amount:</strong> <span id="review-loan-amount">-</span></div>
                             <div><strong>Term:</strong> <span id="review-term">-</span></div>
-                            <div><strong>Interest:</strong> <span id="review-interest">-</span></div>
+                            <div><strong>Interest Rate:</strong> <span id="review-interest">-</span></div>
                             <div><strong>Total Repayment:</strong> <span id="review-total">-</span></div>
                             <div><strong>Reason:</strong> <span id="review-reason">-</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Collateral Information</label>
+                        <div style="background: var(--grey-light); padding: 14px; border-radius: var(--radius); font-size: 13px;">
+                            <div><strong>Type:</strong> <span id="review-collateral">-</span></div>
+                            <div><strong>Description:</strong> <span id="review-collateral-desc">-</span></div>
+                            <div><strong>Estimated Value:</strong> <span id="review-collateral-value">-</span></div>
                         </div>
                     </div>
                     
@@ -1196,6 +1705,8 @@
                             <div><strong>Name:</strong> <span id="review-kin-name">-</span></div>
                             <div><strong>Relationship:</strong> <span id="review-kin-relationship">-</span></div>
                             <div><strong>Phone:</strong> <span id="review-kin-phone">-</span></div>
+                            <div><strong>Email:</strong> <span id="review-kin-email">-</span></div>
+                            <div><strong>Address:</strong> <span id="review-kin-address">-</span></div>
                         </div>
                     </div>
                     
@@ -1210,7 +1721,7 @@
                     </div>
                     
                     <div class="form-navigation">
-                        <button class="btn-secondary" onclick="previousStep(3)">Previous</button>
+                        <button class="btn-secondary" onclick="previousStep(4)">Previous</button>
                         <button class="btn-primary" id="submit-btn" onclick="submitApplication()">Submit Application</button>
                     </div>
                 </div>
@@ -1246,11 +1757,25 @@
                         <input type="email" class="form-input" id="profile-email-input" value="johndoe@example.com">
                     </div>
                     
+                    <div class="form-group">
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" class="form-input" id="profile-dob-input" value="1990-01-01">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">National ID</label>
+                        <input type="text" class="form-input" id="profile-id-input" value="123456/78/9">
+                    </div>
+                    
                     <button class="apply-btn" id="update-profile-btn">Update Profile</button>
                 </div>
             </div>
         </div>
     </main>
+
+    <button class="floating-btn" onclick="showPage('apply-page')">
+        <i class="fa-solid fa-plus"></i>
+    </button>
 
     <nav>
         <button class="nav-item active" onclick="showPage('home-page')">
@@ -1271,6 +1796,61 @@
         </button>
     </nav>
 
+    <!-- Side Panel -->
+    <div class="side-panel" id="side-panel">
+        <div class="panel-header">
+            <h2>Menu</h2>
+            <button class="close-panel" id="close-panel">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="panel-item" onclick="showPage('profile-page'); closePanel()">
+                <i class="fa-solid fa-user"></i>
+                <span>Profile</span>
+            </div>
+            <div class="panel-item" onclick="closePanel()">
+                <i class="fa-solid fa-phone"></i>
+                <span>Contact Us</span>
+            </div>
+            <div class="panel-item" onclick="closePanel()">
+                <i class="fa-solid fa-file-contract"></i>
+                <span>Terms & Conditions</span>
+            </div>
+            <div class="panel-item" onclick="closePanel()">
+                <i class="fa-solid fa-question-circle"></i>
+                <span>Help & Support</span>
+            </div>
+            <div class="panel-item" onclick="closePanel()">
+                <i class="fa-solid fa-share-alt"></i>
+                <span>Refer a Friend</span>
+            </div>
+            <div class="panel-item" onclick="closePanel()">
+                <i class="fa-solid fa-cog"></i>
+                <span>Settings</span>
+            </div>
+            <div class="panel-item" onclick="closePanel()">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Logout</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Panel -->
+    <div class="notification-panel" id="notification-panel">
+        <div class="panel-header">
+            <h2>Notifications</h2>
+            <button class="close-panel" id="close-notification-panel">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="panel-content" id="notification-list">
+            <!-- Notifications will be populated here -->
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
     <script>
         // Firebase configuration
         const firebaseConfig = {
@@ -1288,16 +1868,21 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const storage = firebase.storage();
-
+        const auth = firebase.auth();
+        
         // Application state
+        let currentUser = null;
         let currentStep = 1;
         let applicationData = {
             personalInfo: {},
             loanDetails: {},
+            collateralInfo: {},
             nextOfKin: {},
             documents: {}
         };
         let uploadedFiles = {};
+        let notifications = [];
+        let userLoans = [];
 
         // Page navigation
         function showPage(pageId) {
@@ -1321,8 +1906,35 @@
                 resetApplicationForm();
             } else if (pageId === 'profile-page') {
                 document.querySelectorAll('.nav-item')[3].classList.add('active');
+                loadUserProfile();
             }
         }
+        
+        // Side panel functionality
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            document.getElementById('side-panel').classList.add('open');
+            document.getElementById('overlay').classList.add('active');
+        });
+        
+        document.getElementById('close-panel').addEventListener('click', closePanel);
+        document.getElementById('overlay').addEventListener('click', closePanel);
+        
+        function closePanel() {
+            document.getElementById('side-panel').classList.remove('open');
+            document.getElementById('notification-panel').classList.remove('open');
+            document.getElementById('overlay').classList.remove('active');
+        }
+        
+        // Notification panel
+        document.getElementById('notification-toggle').addEventListener('click', function() {
+            document.getElementById('notification-panel').classList.add('open');
+            document.getElementById('overlay').classList.add('active');
+        });
+        
+        document.getElementById('close-notification-panel').addEventListener('click', function() {
+            document.getElementById('notification-panel').classList.remove('open');
+            document.getElementById('overlay').classList.remove('active');
+        });
         
         // Multi-step application form
         function nextStep(step) {
@@ -1335,7 +1947,7 @@
             document.getElementById('step' + currentStep).classList.add('active');
             
             // Update review section
-            if (step === 4) {
+            if (step === 5) {
                 updateReviewSection();
             }
         }
@@ -1366,6 +1978,7 @@
             applicationData = {
                 personalInfo: {},
                 loanDetails: {},
+                collateralInfo: {},
                 nextOfKin: {},
                 documents: {}
             };
@@ -1378,7 +1991,7 @@
             });
             
             // Clear form fields
-            document.querySelectorAll('.form-input').forEach(field => {
+            document.querySelectorAll('.form-input, .form-select').forEach(field => {
                 field.value = '';
                 field.classList.remove('error');
             });
@@ -1407,7 +2020,7 @@
                 this.classList.add('selected');
                 
                 // Store the selected collateral
-                applicationData.personalInfo['collateral-type'] = this.getAttribute('data-value');
+                applicationData.collateralInfo['collateral-type'] = this.getAttribute('data-value');
                 
                 // Hide error message if shown
                 document.getElementById('collateral-type-error').style.display = 'none';
@@ -1418,12 +2031,13 @@
         function validateField(fieldId, type) {
             const field = document.getElementById(fieldId);
             const value = field.value.trim();
-            const errorElement = document.getElementById(fieldId + '-error');
+            const errorId = fieldId + '-error';
+            const errorElement = document.getElementById(errorId);
+            
+            if (!errorElement) return true;
             
             let isValid = true;
             let errorMessage = '';
-            
-            if (!errorElement) return true;
             
             switch(type) {
                 case 'name':
@@ -1471,6 +2085,18 @@
                         errorMessage = 'Please enter a valid amount between K100 and K6,000';
                     }
                     break;
+                case 'date':
+                    if (!value) {
+                        isValid = false;
+                        errorMessage = 'This field is required';
+                    }
+                    break;
+                case 'id':
+                    if (value.length < 5) {
+                        isValid = false;
+                        errorMessage = 'Please enter a valid ID number';
+                    }
+                    break;
             }
             
             if (isValid) {
@@ -1496,6 +2122,8 @@
                 return 'nextOfKin';
             } else if (fieldId.includes('loan-') || fieldId === 'repayment-period' || fieldId === 'loan-reason') {
                 return 'loanDetails';
+            } else if (fieldId.includes('collateral-')) {
+                return 'collateralInfo';
             } else {
                 return 'personalInfo';
             }
@@ -1511,7 +2139,10 @@
                         { id: 'full-name', type: 'name' },
                         { id: 'phone-number', type: 'phone' },
                         { id: 'email', type: 'email' },
-                        { id: 'address', type: 'address' }
+                        { id: 'dob', type: 'date' },
+                        { id: 'national-id', type: 'id' },
+                        { id: 'address', type: 'address' },
+                        { id: 'city', type: 'name' }
                     ];
                     
                     step1Fields.forEach(field => {
@@ -1520,14 +2151,6 @@
                         }
                     });
                     
-                    // Validate collateral selection
-                    if (!applicationData.personalInfo['collateral-type']) {
-                        document.getElementById('collateral-type-error').style.display = 'block';
-                        isValid = false;
-                    } else {
-                        document.getElementById('collateral-type-error').style.display = 'none';
-                    }
-                    
                     // Validate file uploads
                     const profileUpload = document.getElementById('profile-photo-upload');
                     if (!profileUpload.classList.contains('has-image')) {
@@ -1535,22 +2158,6 @@
                         isValid = false;
                     } else {
                         document.getElementById('profile-photo-error').style.display = 'none';
-                    }
-                    
-                    const nrcFrontUpload = document.getElementById('nrc-front-upload');
-                    if (!nrcFrontUpload.classList.contains('has-image')) {
-                        document.getElementById('nrc-front-error').style.display = 'block';
-                        isValid = false;
-                    } else {
-                        document.getElementById('nrc-front-error').style.display = 'none';
-                    }
-                    
-                    const nrcBackUpload = document.getElementById('nrc-back-upload');
-                    if (!nrcBackUpload.classList.contains('has-image')) {
-                        document.getElementById('nrc-back-error').style.display = 'block';
-                        isValid = false;
-                    } else {
-                        document.getElementById('nrc-back-error').style.display = 'none';
                     }
                     
                     break;
@@ -1572,6 +2179,63 @@
                 case 3:
                     // Validate required fields in step 3
                     const step3Fields = [
+                        { id: 'collateral-description', type: 'text' },
+                        { id: 'collateral-value', type: 'amount' }
+                    ];
+                    
+                    step3Fields.forEach(field => {
+                        if (!validateField(field.id, field.type)) {
+                            isValid = false;
+                        }
+                    });
+                    
+                    // Validate collateral selection
+                    if (!applicationData.collateralInfo['collateral-type']) {
+                        document.getElementById('collateral-type-error').style.display = 'block';
+                        isValid = false;
+                    } else {
+                        document.getElementById('collateral-type-error').style.display = 'none';
+                    }
+                    
+                    // Validate file uploads
+                    const nrcFrontUpload = document.getElementById('nrc-front-upload');
+                    if (!nrcFrontUpload.classList.contains('has-image')) {
+                        document.getElementById('nrc-front-error').style.display = 'block';
+                        isValid = false;
+                    } else {
+                        document.getElementById('nrc-front-error').style.display = 'none';
+                    }
+                    
+                    const nrcBackUpload = document.getElementById('nrc-back-upload');
+                    if (!nrcBackUpload.classList.contains('has-image')) {
+                        document.getElementById('nrc-back-error').style.display = 'block';
+                        isValid = false;
+                    } else {
+                        document.getElementById('nrc-back-error').style.display = 'none';
+                    }
+                    
+                    // Check if at least one collateral photo is uploaded
+                    const collateralUploads = [
+                        document.getElementById('collateral-front-upload'),
+                        document.getElementById('collateral-back-upload'),
+                        document.getElementById('collateral-left-upload'),
+                        document.getElementById('collateral-right-upload')
+                    ];
+                    
+                    const hasCollateralPhoto = collateralUploads.some(upload => upload.classList.contains('has-image'));
+                    
+                    if (!hasCollateralPhoto) {
+                        document.getElementById('collateral-photos-error').style.display = 'block';
+                        isValid = false;
+                    } else {
+                        document.getElementById('collateral-photos-error').style.display = 'none';
+                    }
+                    
+                    break;
+                    
+                case 4:
+                    // Validate required fields in step 4
+                    const step4Fields = [
                         { id: 'kin-name', type: 'name' },
                         { id: 'kin-relationship', type: 'select' },
                         { id: 'kin-phone', type: 'phone' },
@@ -1579,7 +2243,7 @@
                         { id: 'kin-address', type: 'address' }
                     ];
                     
-                    step3Fields.forEach(field => {
+                    step4Fields.forEach(field => {
                         if (!validateField(field.id, field.type)) {
                             isValid = false;
                         }
@@ -1610,11 +2274,11 @@
             
             let interestRate;
             switch(period) {
-                case 1: interestRate = 0.20; break;
-                case 2: interestRate = 0.25; break;
-                case 3: interestRate = 0.30; break;
-                case 4: interestRate = 0.35; break;
-                case 8: interestRate = 0.50; break;
+                case 7: interestRate = 0.20; break;
+                case 14: interestRate = 0.25; break;
+                case 21: interestRate = 0.30; break;
+                case 30: interestRate = 0.35; break;
+                case 60: interestRate = 0.50; break;
                 default: interestRate = 0.35;
             }
             
@@ -1625,11 +2289,65 @@
             document.getElementById('summary-interest-amount').textContent = 'K' + interestAmount;
             document.getElementById('summary-total').textContent = 'K' + totalRepayment;
             
+            // Generate repayment schedule
+            generateRepaymentSchedule(amount, period, interestRate);
+            
             // Store in application data
             applicationData.loanDetails.amount = amount;
             applicationData.loanDetails.period = period;
             applicationData.loanDetails.interestRate = interestRate;
             applicationData.loanDetails.totalRepayment = totalRepayment;
+        }
+        
+        function generateRepaymentSchedule(amount, periodDays, interestRate) {
+            const scheduleList = document.getElementById('repayment-schedule-list');
+            scheduleList.innerHTML = '';
+            
+            const interestAmount = Math.round(amount * interestRate);
+            const totalRepayment = amount + interestAmount + 50;
+            const dailyPayment = Math.round(totalRepayment / (periodDays / 7) * 7) / periodDays;
+            
+            const startDate = new Date();
+            
+            for (let i = 1; i <= Math.ceil(periodDays / 7); i++) {
+                const paymentDate = new Date(startDate);
+                paymentDate.setDate(startDate.getDate() + (i * 7));
+                
+                const scheduleItem = document.createElement('div');
+                scheduleItem.className = 'schedule-item';
+                
+                const weekAmount = i === Math.ceil(periodDays / 7) ? 
+                    totalRepayment - (dailyPayment * (i - 1) * 7) : 
+                    Math.round(dailyPayment * 7);
+                
+                scheduleItem.innerHTML = `
+                    <div class="schedule-date">Week ${i} - ${paymentDate.toLocaleDateString()}</div>
+                    <div class="schedule-amount">K${weekAmount}</div>
+                `;
+                
+                scheduleList.appendChild(scheduleItem);
+            }
+        }
+        
+        // Loan calculator
+        function calculateLoan() {
+            const amount = parseInt(document.getElementById('calc-amount').value) || 2500;
+            const period = parseInt(document.getElementById('calc-period').value);
+            
+            let interestRate;
+            switch(period) {
+                case 1: interestRate = 0.20; break;
+                case 2: interestRate = 0.25; break;
+                case 3: interestRate = 0.30; break;
+                case 4: interestRate = 0.35; break;
+                case 8: interestRate = 0.50; break;
+                default: interestRate = 0.35;
+            }
+            
+            const interestAmount = Math.round(amount * interestRate);
+            const totalRepayment = amount + interestAmount + 50;
+            
+            document.getElementById('calc-total').textContent = 'K' + totalRepayment;
         }
         
         // File upload and preview
@@ -1677,8 +2395,10 @@
             document.getElementById('review-name').textContent = applicationData.personalInfo['full-name'] || '-';
             document.getElementById('review-phone').textContent = applicationData.personalInfo['phone-number'] || '-';
             document.getElementById('review-email').textContent = applicationData.personalInfo.email || '-';
+            document.getElementById('review-dob').textContent = applicationData.personalInfo.dob || '-';
+            document.getElementById('review-national-id').textContent = applicationData.personalInfo['national-id'] || '-';
             document.getElementById('review-address').textContent = applicationData.personalInfo.address || '-';
-            document.getElementById('review-collateral').textContent = applicationData.personalInfo['collateral-type'] || '-';
+            document.getElementById('review-city').textContent = applicationData.personalInfo.city || '-';
             
             document.getElementById('review-loan-amount').textContent = 'K' + (applicationData.loanDetails.amount || '0');
             document.getElementById('review-term').textContent = getTermText(applicationData.loanDetails.period);
@@ -1686,18 +2406,24 @@
             document.getElementById('review-total').textContent = 'K' + (applicationData.loanDetails.totalRepayment || '0');
             document.getElementById('review-reason').textContent = applicationData.loanDetails['loan-reason'] || '-';
             
+            document.getElementById('review-collateral').textContent = applicationData.collateralInfo['collateral-type'] || '-';
+            document.getElementById('review-collateral-desc').textContent = applicationData.collateralInfo['collateral-description'] || '-';
+            document.getElementById('review-collateral-value').textContent = 'K' + (applicationData.collateralInfo['collateral-value'] || '0');
+            
             document.getElementById('review-kin-name').textContent = applicationData.nextOfKin['kin-name'] || '-';
             document.getElementById('review-kin-relationship').textContent = applicationData.nextOfKin['kin-relationship'] || '-';
             document.getElementById('review-kin-phone').textContent = applicationData.nextOfKin['kin-phone'] || '-';
+            document.getElementById('review-kin-email').textContent = applicationData.nextOfKin['kin-email'] || '-';
+            document.getElementById('review-kin-address').textContent = applicationData.nextOfKin['kin-address'] || '-';
         }
         
         function getTermText(period) {
             switch(period) {
-                case 1: return '1 Week';
-                case 2: return '2 Weeks';
-                case 3: return '3 Weeks';
-                case 4: return '1 Month';
-                case 8: return '2 Months';
+                case 7: return '1 Week';
+                case 14: return '2 Weeks';
+                case 21: return '3 Weeks';
+                case 30: return '1 Month';
+                case 60: return '2 Months';
                 default: return '-';
             }
         }
@@ -1738,7 +2464,7 @@
                     ...applicationData,
                     documents: documentUrls,
                     applicationId: applicationId,
-                    userId: 'anonymous', // In a real app, you would use Firebase Auth
+                    userId: currentUser ? currentUser.uid : 'anonymous',
                     status: 'pending',
                     submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1749,6 +2475,9 @@
                 
                 // Show success message
                 showToast('Application submitted successfully!', 'success');
+                
+                // Add notification
+                addNotification('Application Submitted', 'Your loan application has been received and is under review.');
                 
                 // Reset form and navigate to loans page
                 setTimeout(() => {
@@ -1839,14 +2568,39 @@
             
             let statusBadge = '';
             if (loan.status === 'approved') {
-                statusBadge = `<div class="loan-amount-badge">K${loan.loanDetails.amount}</div>`;
+                statusBadge = `<div class="loan-status status-approved">Approved</div>`;
             } else if (loan.status === 'pending') {
-                statusBadge = `<div class="loan-amount-badge" style="background: var(--warning); color: white;">Pending</div>`;
+                statusBadge = `<div class="loan-status status-pending">Pending</div>`;
             } else if (loan.status === 'rejected') {
-                statusBadge = `<div class="loan-amount-badge" style="background: var(--error); color: white;">Rejected</div>`;
+                statusBadge = `<div class="loan-status status-rejected">Rejected</div>`;
+            } else if (loan.status === 'completed') {
+                statusBadge = `<div class="loan-status status-completed">Completed</div>`;
             }
             
             const submittedDate = loan.submittedAt ? loan.submittedAt.toDate().toLocaleDateString() : 'Unknown date';
+            const loanAmount = loan.loanDetails ? loan.loanDetails.amount : 0;
+            
+            let loanInfo = '';
+            if (loan.status === 'approved' || loan.status === 'completed') {
+                const totalRepayment = loan.loanDetails ? loan.loanDetails.totalRepayment : 0;
+                loanInfo = `
+                    <div class="loan-info">
+                        <div class="loan-info-label">Amount</div>
+                        <div class="loan-info-value">K${loanAmount}</div>
+                    </div>
+                    <div class="loan-info">
+                        <div class="loan-info-label">Total Repayment</div>
+                        <div class="loan-info-value">K${totalRepayment}</div>
+                    </div>
+                `;
+            } else {
+                loanInfo = `
+                    <div class="loan-info">
+                        <div class="loan-info-label">Amount</div>
+                        <div class="loan-info-value">K${loanAmount}</div>
+                    </div>
+                `;
+            }
             
             loanItem.innerHTML = `
                 <div class="loan-header">
@@ -1856,17 +2610,75 @@
                     </div>
                     ${statusBadge}
                 </div>
-                <div class="loan-info">
-                    <div class="loan-info-label">Amount</div>
-                    <div class="loan-info-value">K${loan.loanDetails.amount || '0'}</div>
-                </div>
-                <div class="loan-info">
-                    <div class="loan-info-label">Status</div>
-                    <div class="loan-info-value">${loan.status}</div>
-                </div>
+                ${loanInfo}
             `;
             
             return loanItem;
+        }
+        
+        // Load user profile
+        function loadUserProfile() {
+            // In a real app, you would fetch this data from Firestore
+            // For now, we'll use mock data
+            
+            const mockProfile = {
+                name: 'John Doe',
+                phone: '+260 123 456 789',
+                email: 'johndoe@example.com',
+                dob: '1990-01-01',
+                idNumber: '123456/78/9'
+            };
+            
+            document.getElementById('profile-name').textContent = mockProfile.name;
+            document.getElementById('profile-phone').textContent = mockProfile.phone;
+            document.getElementById('profile-name-input').value = mockProfile.name;
+            document.getElementById('profile-phone-input').value = mockProfile.phone;
+            document.getElementById('profile-email-input').value = mockProfile.email;
+            document.getElementById('profile-dob-input').value = mockProfile.dob;
+            document.getElementById('profile-id-input').value = mockProfile.idNumber;
+        }
+        
+        // Notifications
+        function addNotification(title, message) {
+            const notification = {
+                id: Date.now(),
+                title: title,
+                message: message,
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                read: false
+            };
+            
+            notifications.unshift(notification);
+            updateNotificationBadge();
+            updateNotificationList();
+        }
+        
+        function updateNotificationBadge() {
+            const badge = document.getElementById('notification-count');
+            const unreadCount = notifications.filter(n => !n.read).length;
+            
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+        
+        function updateNotificationList() {
+            const notificationList = document.getElementById('notification-list');
+            notificationList.innerHTML = '';
+            
+            notifications.forEach(notification => {
+                const notificationItem = document.createElement('div');
+                notificationItem.className = 'notification-item';
+                notificationItem.innerHTML = `
+                    <div class="notification-title">${notification.title}</div>
+                    <div class="notification-message">${notification.message}</div>
+                    <div class="notification-time">${notification.time}</div>
+                `;
+                notificationList.appendChild(notificationItem);
+            });
         }
         
         // Toast notifications
@@ -1889,6 +2701,26 @@
         function initApp() {
             // Initialize repayment calculation
             calculateRepayment();
+            calculateLoan();
+            
+            // Add some sample notifications
+            addNotification('Welcome to DMK Money', 'Thank you for choosing DMK Money Solution for your financial needs.');
+            addNotification('Loan Calculator', 'Use our loan calculator to estimate your repayment amount.');
+            
+            // Set up notification listener
+            setInterval(() => {
+                // Simulate receiving notifications
+                if (Math.random() < 0.1) { // 10% chance every 30 seconds
+                    const sampleNotifications = [
+                        { title: 'Application Update', message: 'Your loan application status has been updated' },
+                        { title: 'New Loan Offer', message: 'Check out our new loan products with better rates' },
+                        { title: 'Payment Reminder', message: 'Your next loan payment is due soon' }
+                    ];
+                    
+                    const randomNotification = sampleNotifications[Math.floor(Math.random() * sampleNotifications.length)];
+                    addNotification(randomNotification.title, randomNotification.message);
+                }
+            }, 30000);
         }
         
         // Initialize the app when DOM is loaded
