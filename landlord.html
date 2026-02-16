@@ -2,103 +2,92 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>NZUBO · landlord</title>
-  <!-- Font Awesome 6 -->
+  <!-- Font Awesome 6 (compact icons) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Leaflet (map) -->
+  <!-- Leaflet (lightweight map) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- Cloudinary widget -->
+  <!-- Cloudinary upload widget -->
   <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
-  <!-- Firebase SDK (compat) -->
+  <!-- Firebase SDK compat (v9) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <style>
+    /* ----- RESET & COMPACT VARIABLES (mobile first) ----- */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      -webkit-font-smoothing: antialiased;
       -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
-
     :root {
-      --white: #ffffff;
       --purple: #7c3aed;
       --purple-light: #c4b5fd;
       --purple-soft: #ede9fe;
-      --gray-100: #f3f4f6;
-      --gray-300: #d1d5db;
-      --gray-500: #6b7280;
-      --shadow-float: 0 20px 35px -10px rgba(124, 58, 237, 0.2), 0 5px 15px rgba(0,0,0,0.03);
-      --radius-card: 28px;
-      --radius-input: 24px;
+      --white: #ffffff;
+      --gray-bg: #f8f7ff;
+      --shadow-sm: 0 4px 10px rgba(124,58,237,0.1);
+      --radius-card: 24px;
+      --radius-btn: 40px;
     }
-
     body {
-      font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif;
       background: var(--white);
-      color: #1e1e2f;
       height: 100vh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      color: #1f1f2e;
     }
-
-    /* main layout */
-    .app-header {
-      padding: 18px 20px 8px;
+    /* ----- header (compact) ----- */
+    .header {
+      padding: 12px 16px 6px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: var(--white);
       border-bottom: 2px solid var(--purple-light);
+      background: var(--white);
     }
-    .nzubo-big {
+    .logo-wrap {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
-    .nzubo-big h1 {
-      font-size: 3.2rem;
+    .logo-wrap h1 {
+      font-size: 2.2rem;
       font-weight: 800;
       color: var(--purple);
-      letter-spacing: -1.5px;
-      text-shadow: 2px 2px 0 var(--purple-soft);
+      letter-spacing: -1px;
+      line-height: 1;
     }
     .home-icon {
       background: var(--purple-soft);
-      width: 50px;
-      height: 50px;
+      width: 42px;
+      height: 42px;
       border-radius: 30px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2rem;
+      font-size: 1.6rem;
       color: var(--purple);
       border: 2px solid var(--purple-light);
-      box-shadow: 0 5px 0 #e0d0ff;
+      box-shadow: 0 3px 0 #ddd6fe;
     }
-
-    /* main content area (switches sections) */
-    .main-content {
+    .header-right i {
+      font-size: 1.5rem;
+      color: var(--purple);
+    }
+    /* ----- main scroll area (with bottom nav offset) ----- */
+    .main-scroll {
       flex: 1;
       overflow-y: auto;
-      padding: 20px 16px 80px; /* bottom space for nav */
-      background: #fafaff;
+      padding: 16px 14px 80px;
+      background: var(--gray-bg);
     }
-
-    /* section cards */
-    .section {
-      display: none;
-    }
-    .section.active {
-      display: block;
-    }
-
-    /* bottom navigation */
+    /* ----- bottom nav (compact, purple) ----- */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -108,230 +97,325 @@
       display: flex;
       justify-content: space-around;
       align-items: center;
-      padding: 8px 12px 20px;
+      padding: 6px 12px 18px;
       border-top: 2px solid var(--purple-light);
-      border-radius: 30px 30px 0 0;
-      box-shadow: 0 -5px 20px rgba(124,58,237,0.1);
-      backdrop-filter: blur(10px);
+      border-radius: 28px 28px 0 0;
+      box-shadow: 0 -3px 15px rgba(124,58,237,0.1);
       z-index: 100;
     }
     .nav-item {
       display: flex;
       flex-direction: column;
       align-items: center;
-      color: var(--gray-500);
-      font-size: 0.8rem;
+      color: #a78bfa;
+      font-size: 0.7rem;
       font-weight: 600;
       transition: 0.1s;
       cursor: pointer;
     }
     .nav-item i {
-      font-size: 1.8rem;
-      margin-bottom: 2px;
+      font-size: 1.6rem;
     }
     .nav-item.active {
       color: var(--purple);
     }
-
-    /* post creator card */
-    .post-creator {
+    /* ----- section toggling ----- */
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+    }
+    /* ----- post dropdown / collapsible creator ----- */
+    .post-dropdown {
       background: white;
       border-radius: var(--radius-card);
-      padding: 18px;
-      margin-bottom: 24px;
       border: 2px solid var(--purple-light);
-      box-shadow: var(--shadow-float);
+      margin-bottom: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
     }
-    .creator-row {
+    .post-header-btn {
       display: flex;
-      gap: 15px;
-      margin-bottom: 15px;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 18px;
+      background: var(--purple-soft);
+      font-weight: 700;
+      color: var(--purple);
+      cursor: pointer;
+    }
+    .post-header-btn i {
+      font-size: 1.4rem;
+    }
+    .post-creator {
+      padding: 16px;
+      border-top: 2px dashed var(--purple-light);
+      background: white;
+    }
+    .compact-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 12px;
     }
     .profile-thumb {
-      width: 52px;
-      height: 52px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
-      background: var(--purple-soft);
       border: 2px solid var(--purple);
       object-fit: cover;
     }
-    .creator-input {
+    .desc-input {
       flex: 1;
       background: #f5f0ff;
       border: 2px solid var(--purple-light);
-      border-radius: 40px;
-      padding: 14px 18px;
-      font-size: 1rem;
+      border-radius: 30px;
+      padding: 12px 16px;
+      font-size: 0.9rem;
     }
-    .photo-grid-preview {
+    .photo-strip {
       display: flex;
-      gap: 8px;
       flex-wrap: wrap;
-      margin: 10px 0;
+      gap: 6px;
+      margin: 8px 0;
     }
-    .preview-img {
-      width: 70px;
-      height: 70px;
-      border-radius: 18px;
+    .preview-thumb {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
       border: 2px solid var(--purple);
       object-fit: cover;
     }
     .map-preview {
-      height: 150px;
-      border-radius: 30px;
+      height: 130px;
+      border-radius: 24px;
       border: 2px solid var(--purple-light);
-      margin: 12px 0;
+      margin: 10px 0;
     }
-    .flex-row {
+    .inline-flex {
       display: flex;
-      gap: 15px;
+      gap: 10px;
       align-items: center;
       flex-wrap: wrap;
     }
-    .price-input {
-      padding: 14px 18px;
-      border: 2px solid var(--purple-light);
-      border-radius: 50px;
-      font-size: 1rem;
+    .price-small {
       flex: 1;
+      padding: 12px 16px;
+      border: 2px solid var(--purple-light);
+      border-radius: 40px;
+      font-size: 0.9rem;
     }
-    .btn-purple {
+    .btn-purple-sm {
       background: var(--purple);
       color: white;
       border: none;
-      border-radius: 60px;
-      padding: 14px 28px;
+      border-radius: 40px;
+      padding: 12px 24px;
       font-weight: 700;
-      font-size: 1.1rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 6px 0 #4c1d95;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 0 #4c1d95;
       cursor: pointer;
-      transition: 0.1s;
     }
-    .btn-purple:active {
-      transform: translateY(4px);
-      box-shadow: 0 2px 0 #4c1d95;
+    .btn-purple-sm:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #4c1d95;
     }
-
-    /* instagram post card */
-    .post-card {
+    .upload-btn {
+      background: white;
+      border: 2px solid var(--purple);
+      border-radius: 40px;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--purple);
+      cursor: pointer;
+    }
+    /* ----- feed cards (instagram compact) ----- */
+    .feed-card {
       background: white;
       border-radius: var(--radius-card);
       border: 2px solid var(--purple-light);
-      padding: 18px;
-      margin-bottom: 22px;
-      box-shadow: var(--shadow-float);
+      padding: 14px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
     }
-    .post-header {
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .card-header img {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 2px solid var(--purple);
+    }
+    .card-header h4 {
+      font-size: 0.95rem;
+    }
+    .card-header small {
+      font-size: 0.7rem;
+      color: gray;
+    }
+    .desc-text {
+      font-size: 0.9rem;
+      margin: 8px 0 4px;
+    }
+    .price-badge {
+      background: var(--purple-soft);
+      padding: 4px 12px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: inline-block;
+      margin: 6px 0;
+    }
+    .grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+      margin: 8px 0;
+    }
+    .grid-2x2 img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      border-radius: 18px;
+      border: 2px solid var(--purple-light);
+      object-fit: cover;
+    }
+    .video-indicator {
+      position: relative;
+    }
+    .video-indicator i {
+      position: absolute;
+      bottom: 6px; right: 6px;
+      background: var(--purple);
+      color: white;
+      border-radius: 50%;
+      padding: 6px;
+      font-size: 0.8rem;
+    }
+    .tiny-map {
+      height: 120px;
+      border-radius: 20px;
+      border: 2px solid var(--purple);
+      margin: 8px 0;
+    }
+    .post-actions {
+      display: flex;
+      gap: 24px;
+      margin-top: 8px;
+      color: var(--purple);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .post-actions i {
+      font-size: 1.4rem;
+    }
+    /* ----- chat list (real) ----- */
+    .chat-list {
+      margin-bottom: 12px;
+    }
+    .chat-item {
+      background: white;
+      border-radius: 60px;
+      border: 2px solid var(--purple-light);
+      padding: 12px 16px;
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
+      cursor: pointer;
     }
-    .post-header img {
+    .chat-item img {
       width: 44px;
       height: 44px;
       border-radius: 50%;
       border: 2px solid var(--purple);
     }
-    .post-header h4 {
-      font-size: 1.1rem;
-    }
-    .post-description {
-      margin: 12px 0;
+    .chat-item h4 {
       font-size: 1rem;
     }
-    .price-tag {
-      background: var(--purple-soft);
-      padding: 8px 14px;
-      border-radius: 60px;
-      font-weight: 700;
-      color: var(--purple);
-      display: inline-block;
-      margin: 5px 0;
+    .chat-item p {
+      font-size: 0.8rem;
+      color: #4b5563;
     }
-    .grid-2x2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin: 12px 0;
-    }
-    .grid-2x2 img {
-      width: 100%;
-      aspect-ratio: 1/1;
-      border-radius: 24px;
-      border: 2px solid var(--purple-light);
-      object-fit: cover;
-    }
-    .video-thumb {
-      position: relative;
-    }
-    .video-thumb i {
-      position: absolute;
-      bottom: 8px; right: 8px;
-      background: var(--purple);
-      color: white;
-      border-radius: 50%;
-      padding: 8px;
-    }
-    .leaflet-map {
-      height: 160px;
-      border-radius: 30px;
-      border: 2px solid var(--purple);
-      margin: 12px 0;
-    }
-    .post-actions {
-      display: flex;
-      gap: 30px;
-      margin-top: 12px;
-      color: var(--purple);
-      font-weight: 600;
-    }
-    .post-actions i {
-      font-size: 1.6rem;
-      margin-right: 5px;
-    }
-
-    /* chat list */
-    .chat-item {
+    .chat-window {
       background: white;
-      border-radius: 60px;
+      border-radius: 30px;
       border: 2px solid var(--purple-light);
       padding: 16px;
+      margin-top: 16px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .message-bubble {
       display: flex;
-      align-items: center;
-      gap: 15px;
       margin-bottom: 12px;
     }
-    .chat-item img {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
+    .message-bubble.landlord {
+      justify-content: flex-end;
     }
-
-    /* property status */
+    .message-bubble.tenant {
+      justify-content: flex-start;
+    }
+    .bubble {
+      max-width: 70%;
+      padding: 10px 16px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      background: var(--purple-soft);
+      border: 2px solid var(--purple-light);
+    }
+    .message-bubble.landlord .bubble {
+      background: var(--purple);
+      color: white;
+      border-color: #4c1d95;
+    }
+    .chat-input-area {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .chat-input-area input {
+      flex: 1;
+      padding: 12px 18px;
+      border: 2px solid var(--purple-light);
+      border-radius: 40px;
+    }
+    .chat-input-area button {
+      background: var(--purple);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      font-size: 1.3rem;
+    }
+    /* property list compact */
     .prop-item {
       background: white;
       border-radius: 30px;
-      padding: 16px;
       border: 2px solid var(--purple-light);
+      padding: 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .status-badge {
       background: var(--purple);
       color: white;
-      border-radius: 60px;
-      padding: 6px 18px;
+      border-radius: 40px;
+      padding: 4px 12px;
+      font-size: 0.8rem;
     }
     .toggle-switch {
-      width: 60px;
-      height: 30px;
-      background: var(--gray-300);
+      width: 50px;
+      height: 26px;
+      background: #d1d5db;
       border-radius: 40px;
       position: relative;
       cursor: pointer;
@@ -341,7 +425,7 @@
     }
     .toggle-switch::after {
       content: '';
-      width: 26px; height: 26px;
+      width: 22px; height: 22px;
       background: white;
       border-radius: 50%;
       position: absolute;
@@ -349,122 +433,134 @@
       transition: 0.1s;
     }
     .toggle-switch.active::after {
-      left: 32px;
+      left: 26px;
     }
-
     /* settings */
+    .settings-card {
+      background: white;
+      border-radius: 40px;
+      padding: 20px;
+      border: 2px solid var(--purple-light);
+    }
     .settings-field {
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
     .settings-field label {
       font-weight: 600;
       color: var(--purple);
+      font-size: 0.9rem;
     }
     .settings-field input, .settings-field select {
       width: 100%;
-      padding: 16px;
+      padding: 14px;
       border: 2px solid var(--purple-light);
       border-radius: 40px;
-      margin-top: 6px;
+      margin-top: 4px;
+    }
+    /* toast */
+    .toast-msg {
+      position: fixed;
+      bottom: 100px; left: 20px; right: 20px;
+      background: var(--purple);
+      color: white;
+      text-align: center;
+      padding: 12px;
+      border-radius: 60px;
+      font-weight: 600;
+      z-index: 200;
+      display: none;
     }
   </style>
 </head>
 <body>
-  <!-- header -->
-  <div class="app-header">
-    <div class="nzubo-big">
+  <div class="header">
+    <div class="logo-wrap">
       <h1>NZUBO</h1>
       <div class="home-icon"><i class="fas fa-house"></i></div>
     </div>
-    <div style="color: var(--purple);"><i class="fas fa-bell"></i></div>
+    <div class="header-right"><i class="fas fa-bell"></i></div>
   </div>
 
-  <!-- main content sections -->
-  <div class="main-content" id="mainContent">
-    <!-- HOME / FEED section (default active) -->
+  <div class="main-scroll" id="mainScroll">
+    <!-- HOME SECTION (feed + post dropdown) -->
     <div class="section active" id="sectionHome">
-      <!-- post creator -->
-      <div class="post-creator" id="postCreator">
-        <div class="creator-row">
-          <img src="" alt="profile" class="profile-thumb" id="landlordProfileThumb">
-          <input type="text" class="creator-input" id="postDesc" placeholder="Describe your property...">
+      <!-- collapsible post dropdown -->
+      <div class="post-dropdown">
+        <div class="post-header-btn" id="togglePostBtn">
+          <i class="fas fa-plus-circle"></i> <span>POST A PROPERTY</span> <i class="fas fa-chevron-down" style="margin-left: auto;"></i>
         </div>
-        <!-- photo upload preview area -->
-        <div class="photo-grid-preview" id="photoPreviewContainer"></div>
-        <!-- optional video indicator -->
-        <div id="videoIndicator" style="margin-bottom:8px; color:var(--purple);"></div>
-        <!-- map picker (small) -->
-        <div id="mapPicker" class="map-preview"></div>
-        <div class="flex-row">
-          <button class="btn-upload" style="background:white; border:2px solid var(--purple); border-radius:60px; padding:12px 20px;" onclick="openMediaUploader()"><i class="fas fa-cloud-upload-alt"></i> add photos/video</button>
-          <input type="text" id="priceInput" class="price-input" placeholder="Price (ZMK)">
-        </div>
-        <div class="flex-row" style="margin-top:15px;">
-          <button class="btn-purple" onclick="postProperty()"><i class="fas fa-paper-plane"></i> POST</button>
-          <span><i class="fas fa-map-pin" style="color:var(--purple);"></i> tap map to set location</span>
+        <div id="postCreatorContainer" style="display: none;">
+          <div class="post-creator">
+            <div class="compact-row">
+              <img src="" id="landlordThumb" class="profile-thumb" alt="">
+              <input type="text" id="postDesc" class="desc-input" placeholder="Describe property...">
+            </div>
+            <div class="photo-strip" id="photoPreviewStrip"></div>
+            <div id="videoLabel" style="font-size:0.8rem; color:var(--purple); margin-bottom:5px;"></div>
+            <div id="mapPicker" class="map-preview"></div>
+            <div class="inline-flex">
+              <button class="upload-btn" onclick="openMediaUploader()"><i class="fas fa-cloud-upload-alt"></i> photos/video</button>
+              <input type="text" id="priceInput" class="price-small" placeholder="Price ZMK">
+            </div>
+            <div style="margin-top:12px;">
+              <button class="btn-purple-sm" onclick="postProperty()" style="width:100%;"><i class="fas fa-paper-plane"></i> PUBLISH</button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- feed of posts -->
+      <!-- feed (real posts from this landlord) -->
       <div id="feedContainer"></div>
     </div>
 
-    <!-- CHAT section (orders / inquiries) -->
+    <!-- CHAT SECTION -->
     <div class="section" id="sectionChat">
-      <h2 style="color:var(--purple); margin-bottom:16px;"><i class="fas fa-comments"></i> inquiries</h2>
-      <div id="chatList"></div>
-      <div id="activeChat" style="margin-top:20px; background:white; border-radius:40px; padding:20px; border:2px solid var(--purple-light);">
-        <p style="text-align:center;">Select a conversation</p>
+      <div class="chat-list" id="chatList"></div>
+      <div id="chatWindow" class="chat-window" style="display: none;">
+        <div id="messagesContainer"></div>
+        <div class="chat-input-area">
+          <input type="text" id="chatInput" placeholder="message...">
+          <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
       </div>
     </div>
 
-    <!-- PROPERTIES RENTED section -->
+    <!-- PROPERTIES RENTED SECTION -->
     <div class="section" id="sectionProperties">
-      <h2 style="color:var(--purple);"><i class="fas fa-building"></i> my properties</h2>
       <div id="propertyList"></div>
     </div>
 
-    <!-- SETTINGS section -->
+    <!-- SETTINGS SECTION -->
     <div class="section" id="sectionSettings">
-      <h2 style="color:var(--purple);"><i class="fas fa-gear"></i> settings</h2>
-      <div class="settings-card" style="background:white; border-radius:40px; padding:22px; border:2px solid var(--purple-light);">
+      <div class="settings-card">
         <div class="settings-field">
-          <label>profile photo</label>
-          <div style="display:flex; align-items:center; gap:20px;">
-            <img src="" id="settingsProfileImg" style="width:70px;height:70px;border-radius:50%;border:2px solid var(--purple);">
-            <button class="btn-upload" onclick="openCloudinaryFor('profile')">change</button>
+          <label>photo</label>
+          <div style="display:flex; align-items:center; gap:15px;">
+            <img src="" id="settingsPhoto" style="width:60px;height:60px;border-radius:50%;border:2px solid var(--purple);">
+            <button class="upload-btn" onclick="openCloudinaryFor('profile')">change</button>
           </div>
         </div>
-        <div class="settings-field">
-          <label>full name</label>
-          <input type="text" id="settingsName" placeholder="Your name">
-        </div>
-        <div class="settings-field">
-          <label>phone</label>
-          <input type="tel" id="settingsPhone">
-        </div>
+        <div class="settings-field"><label>name</label><input type="text" id="settingsName"></div>
+        <div class="settings-field"><label>phone</label><input type="tel" id="settingsPhone"></div>
         <div class="settings-field">
           <label>city</label>
-          <input list="zambia-cities" id="settingsCity" placeholder="search city">
-          <datalist id="zambia-cities">
-            <option>Lusaka</option><option>Kitwe</option><option>Ndola</option><option>Kabwe</option><option>Livingstone</option>
-          </datalist>
+          <input list="zambiaCities" id="settingsCity">
+          <datalist id="zambiaCities"><option>Lusaka</option><option>Kitwe</option><option>Ndola</option><option>Livingstone</option></datalist>
         </div>
-        <button class="btn-purple" onclick="updateSettings()" style="width:100%;">update profile</button>
+        <button class="btn-purple-sm" onclick="updateSettings()" style="width:100%;">update</button>
       </div>
     </div>
   </div>
 
-  <!-- bottom purple nav -->
+  <!-- bottom nav -->
   <div class="bottom-nav">
-    <div class="nav-item active" data-section="home"><i class="fas fa-home"></i><span>Home</span></div>
-    <div class="nav-item" data-section="chat"><i class="fas fa-comment-dots"></i><span>Chat</span></div>
-    <div class="nav-item" data-section="properties"><i class="fas fa-list-check"></i><span>Rented</span></div>
-    <div class="nav-item" data-section="settings"><i class="fas fa-sliders"></i><span>Settings</span></div>
+    <div class="nav-item active" data-sec="home"><i class="fas fa-home"></i><span>Home</span></div>
+    <div class="nav-item" data-sec="chat"><i class="fas fa-comment"></i><span>Chat</span></div>
+    <div class="nav-item" data-sec="properties"><i class="fas fa-building"></i><span>Rented</span></div>
+    <div class="nav-item" data-sec="settings"><i class="fas fa-user"></i><span>Settings</span></div>
   </div>
 
-  <!-- toast -->
-  <div class="toast-container" id="toast" style="position:fixed; bottom:100px; left:0; right:0; display:flex; justify-content:center; pointer-events:none; z-index:200;"></div>
+  <div id="toast" class="toast-msg"></div>
 
   <script>
     // Firebase config (dmkl)
@@ -475,116 +571,96 @@
       projectId: "dmkl-8ea2c",
       storageBucket: "dmkl-8ea2c.firebasestorage.app",
       messagingSenderId: "155892504799",
-      appId: "1:155892504799:web:45ed0037fd0fe79b85b16a",
-      measurementId: "G-61M65C4MZ2"
+      appId: "1:155892504799:web:45ed0037fd0fe79b85b16a"
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
 
-    // Cloudinary
-    const CLOUDINARY_CONFIG = {
-      cloudName: 'dd3lcymrk',
-      uploadPreset: 'h3eyhc2o',
-      folder: 'zynapse/profiles'
-    };
+    // Cloudinary config
+    const CLOUDINARY = { cloudName: 'dd3lcymrk', uploadPreset: 'h3eyhc2o', folder: 'zynapse/profiles' };
 
-    // Global state
+    // Global vars
     let currentLandlord = null;
     let landlordUid = null;
-    let landlordProfile = { name: '', photo: '', phone: '', city: '' };
+    let postPhotos = [], postVideo = null;
+    let lat = -15.4167, lng = 28.2833; // Lusaka default
+    let mapPicker, marker;
+    let selectedTenantId = null; // for chat
 
-    // Post creation temp vars
-    let postPhotos = [];      // array of URLs (max 4)
-    let postVideo = null;     // optional video URL
-    let postLat = -15.4167;   // default Lusaka
-    let postLng = 28.2833;
-    let marker;
-    let mapPicker;
-
-    // On load, check auth and load landlord data
+    // Check auth & role
     auth.onAuthStateChanged(async (user) => {
       if (!user) { window.location.href = 'login.html'; return; }
-      landlordUid = user.uid;
-      const snap = await db.ref('users/' + landlordUid).once('value');
+      const snap = await db.ref('users/' + user.uid).once('value');
       if (!snap.exists() || snap.val().role !== 'landlord') {
-        alert('Access denied. Landlord only.');
+        alert('Not a landlord');
         auth.signOut(); window.location.href = 'index.html'; return;
       }
-      currentLandlord = { uid: landlordUid, ...snap.val() };
-      landlordProfile = currentLandlord;
-      renderLandlordData();
+      landlordUid = user.uid;
+      currentLandlord = { uid: user.uid, ...snap.val() };
+      renderLandlordInfo();
       loadFeed();
-      loadChats();
+      loadChatList();
       loadProperties();
+      initMapPicker();
     });
 
-    function renderLandlordData() {
-      document.getElementById('landlordProfileThumb').src = landlordProfile.photo || 'https://via.placeholder.com/52?text=🏠';
-      document.getElementById('settingsProfileImg').src = landlordProfile.photo || 'https://via.placeholder.com/70?text=🏠';
-      document.getElementById('settingsName').value = landlordProfile.name || '';
-      document.getElementById('settingsPhone').value = landlordProfile.phone || '';
-      document.getElementById('settingsCity').value = landlordProfile.city || '';
+    function renderLandlordInfo() {
+      document.getElementById('landlordThumb').src = currentLandlord.photo || 'https://via.placeholder.com/42?text=🏠';
+      document.getElementById('settingsPhoto').src = currentLandlord.photo || 'https://via.placeholder.com/60?text=🏠';
+      document.getElementById('settingsName').value = currentLandlord.name || '';
+      document.getElementById('settingsPhone').value = currentLandlord.phone || '';
+      document.getElementById('settingsCity').value = currentLandlord.city || '';
     }
 
-    // ---------- map picker initialization (post creator) ----------
+    // ---------- POST DROPDOWN TOGGLE ----------
+    document.getElementById('togglePostBtn').addEventListener('click', () => {
+      const cont = document.getElementById('postCreatorContainer');
+      cont.style.display = cont.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // ---------- MAP PICKER ----------
     function initMapPicker() {
       if (mapPicker) return;
-      mapPicker = L.map('mapPicker').setView([postLat, postLng], 13);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(mapPicker);
-      marker = L.marker([postLat, postLng], { draggable: true }).addTo(mapPicker);
-      marker.on('dragend', (e) => {
-        const pos = e.target.getLatLng();
-        postLat = pos.lat;
-        postLng = pos.lng;
-      });
-      mapPicker.on('click', (e) => {
-        marker.setLatLng(e.latlng);
-        postLat = e.latlng.lat;
-        postLng = e.latlng.lng;
-      });
-      // search (simple prompt)
+      mapPicker = L.map('mapPicker').setView([lat, lng], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapPicker);
+      marker = L.marker([lat, lng], { draggable: true }).addTo(mapPicker);
+      marker.on('dragend', (e) => { const p = e.target.getLatLng(); lat = p.lat; lng = p.lng; });
+      mapPicker.on('click', (e) => { marker.setLatLng(e.latlng); lat = e.latlng.lat; lng = e.latlng.lng; });
+      // search button
       const searchBtn = document.createElement('button');
-      searchBtn.innerHTML = '🔍 search place';
-      searchBtn.style.position = 'absolute'; searchBtn.style.top = '10px'; searchBtn.style.left = '50px'; searchBtn.style.zIndex = '1000';
+      searchBtn.innerHTML = '🔍 search';
+      searchBtn.style.position = 'absolute'; searchBtn.style.top = '5px'; searchBtn.style.left = '10px'; searchBtn.style.zIndex = 1000;
       searchBtn.onclick = () => {
-        const place = prompt('Enter place name (Zambia)');
+        const place = prompt('Zambia city');
         if (!place) return;
         fetch(`https://nominatim.openstreetmap.org/search?q=${place}, Zambia&format=json&limit=1`)
           .then(r => r.json()).then(data => {
-            if (data[0]) {
-              const lat = parseFloat(data[0].lat), lng = parseFloat(data[0].lon);
-              marker.setLatLng([lat, lng]);
-              mapPicker.setView([lat, lng], 15);
-              postLat = lat; postLng = lng;
-            } else alert('not found');
+            if (data[0]) { lat = parseFloat(data[0].lat); lng = parseFloat(data[0].lon); marker.setLatLng([lat, lng]); mapPicker.setView([lat, lng], 15); }
           });
       };
       document.getElementById('mapPicker').appendChild(searchBtn);
     }
 
-    // media upload (photos/video) using Cloudinary
+    // ---------- MEDIA UPLOAD (Cloudinary) ----------
     function openMediaUploader() {
       const widget = cloudinary.createUploadWidget({
-        cloudName: CLOUDINARY_CONFIG.cloudName,
-        uploadPreset: CLOUDINARY_CONFIG.uploadPreset,
+        cloudName: CLOUDINARY.cloudName,
+        uploadPreset: CLOUDINARY.uploadPreset,
         sources: ['local', 'camera'],
         multiple: true,
         maxFiles: 5,
-        folder: CLOUDINARY_CONFIG.folder,
-        cropping: false,
+        folder: CLOUDINARY.folder,
         resourceType: 'auto'
       }, (error, result) => {
         if (!error && result && result.event === 'success') {
           const info = result.info;
           if (info.resource_type === 'video') {
             postVideo = info.secure_url;
-            document.getElementById('videoIndicator').innerHTML = `<i class="fas fa-video"></i> video added: ${info.original_filename}`;
+            document.getElementById('videoLabel').innerHTML = '<i class="fas fa-video"></i> video ready';
           } else {
-            if (postPhotos.length < 4) {
-              postPhotos.push(info.secure_url);
-              renderPhotoPreviews();
-            } else showToast('max 4 photos');
+            if (postPhotos.length < 4) { postPhotos.push(info.secure_url); renderPhotoPreviews(); }
+            else alert('max 4 photos');
           }
         }
       });
@@ -592,106 +668,130 @@
     }
 
     function renderPhotoPreviews() {
-      const container = document.getElementById('photoPreviewContainer');
-      container.innerHTML = '';
-      postPhotos.forEach(url => {
-        const img = document.createElement('img');
-        img.src = url;
-        img.className = 'preview-img';
-        container.appendChild(img);
-      });
+      const strip = document.getElementById('photoPreviewStrip');
+      strip.innerHTML = '';
+      postPhotos.forEach(url => { strip.innerHTML += `<img src="${url}" class="preview-thumb">`; });
     }
 
-    // post property
+    // ---------- POST PROPERTY ----------
     async function postProperty() {
       const desc = document.getElementById('postDesc').value.trim();
       const price = document.getElementById('priceInput').value.trim();
-      if (!desc || !price || postPhotos.length === 0) {
-        showToast('description, price and at least one photo required');
-        return;
-      }
+      if (!desc || !price || postPhotos.length === 0) { showToast('Description, price & photo required'); return; }
       const post = {
-        landlordUid,
-        landlordName: landlordProfile.name,
-        landlordPhoto: landlordProfile.photo,
-        description: desc,
-        price: price + ' ZMK',
-        photos: postPhotos,
-        video: postVideo || null,
-        location: { lat: postLat, lng: postLng },
-        timestamp: Date.now(),
-        likes: 0,
-        comments: []
+        landlordUid, landlordName: currentLandlord.name, landlordPhoto: currentLandlord.photo,
+        description: desc, price: price + ' ZMK', photos: postPhotos, video: postVideo || null,
+        location: { lat, lng }, timestamp: Date.now(), likes: 0, rented: false
       };
       await db.ref('posts').push(post);
-      showToast('posted!');
-      // reset form
-      document.getElementById('postDesc').value = '';
-      document.getElementById('priceInput').value = '';
-      postPhotos = []; postVideo = null;
-      document.getElementById('photoPreviewContainer').innerHTML = '';
-      document.getElementById('videoIndicator').innerHTML = '';
+      showToast('Posted!');
+      document.getElementById('postDesc').value = ''; document.getElementById('priceInput').value = '';
+      postPhotos = []; postVideo = null; document.getElementById('photoPreviewStrip').innerHTML = ''; document.getElementById('videoLabel').innerHTML = '';
       loadFeed();
     }
 
-    // load feed and render
+    // ---------- LOAD FEED (only landlord's posts) ----------
     async function loadFeed() {
-      const snap = await db.ref('posts').orderByChild('timestamp').once('value');
+      const snap = await db.ref('posts').orderByChild('landlordUid').equalTo(landlordUid).once('value');
       const posts = [];
       snap.forEach(ch => posts.push({ id: ch.key, ...ch.val() }));
-      posts.reverse(); // newest first
+      posts.sort((a,b)=>b.timestamp - a.timestamp);
       const feed = document.getElementById('feedContainer');
       feed.innerHTML = '';
-      posts.forEach(p => {
+      for (const p of posts) {
         const card = document.createElement('div');
-        card.className = 'post-card';
-        // header
+        card.className = 'feed-card';
         card.innerHTML = `
-          <div class="post-header">
-            <img src="${p.landlordPhoto || 'https://via.placeholder.com/44'}" onerror="this.src='https://via.placeholder.com/44'">
-            <div><h4>${p.landlordName || 'Landlord'}</h4><small>${new Date(p.timestamp).toLocaleString()}</small></div>
+          <div class="card-header">
+            <img src="${p.landlordPhoto || 'https://via.placeholder.com/38'}" onerror="this.src='https://via.placeholder.com/38'">
+            <div><h4>${p.landlordName||'You'}</h4><small>${new Date(p.timestamp).toLocaleDateString()}</small></div>
           </div>
-          <div class="post-description">${p.description}</div>
-          <div class="price-tag"><i class="fas fa-coins"></i> ${p.price}</div>
+          <div class="desc-text">${p.description}</div>
+          <span class="price-badge"><i class="fas fa-coins"></i> ${p.price}</span>
           <div class="grid-2x2">
-        `;
-        // add up to 4 photos
-        for (let i=0; i<Math.min(4, p.photos.length); i++) {
-          card.innerHTML += `<img src="${p.photos[i]}" style="aspect-ratio:1/1; object-fit:cover;">`;
-        }
-        if (p.video) {
-          card.innerHTML += `<div class="video-thumb"><i class="fas fa-play-circle"></i></div>`;
-        }
-        // map
-        const mapId = 'map'+p.id;
-        card.innerHTML += `</div><div id="${mapId}" class="leaflet-map"></div>`;
-        // actions
-        card.innerHTML += `
+            ${p.photos.slice(0,4).map(url => `<img src="${url}">`).join('')}
+            ${p.video ? '<div class="video-indicator"><i class="fas fa-play"></i></div>' : ''}
+          </div>
+          <div id="map-${p.id}" class="tiny-map"></div>
           <div class="post-actions">
-            <span><i class="fas fa-heart"></i> ${p.likes || 0}</span>
+            <span><i class="fas fa-heart"></i> ${p.likes||0}</span>
             <span><i class="fas fa-comment"></i> comment</span>
           </div>
         `;
         feed.appendChild(card);
-        // init small map for this post
         setTimeout(() => {
           if (p.location) {
-            const m = L.map(mapId).setView([p.location.lat, p.location.lng], 13);
+            const m = L.map(`map-${p.id}`).setView([p.location.lat, p.location.lng], 13);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
             L.marker([p.location.lat, p.location.lng]).addTo(m);
           }
         }, 200);
+      }
+    }
+
+    // ---------- CHAT (real) ----------
+    async function loadChatList() {
+      const chatsDiv = document.getElementById('chatList');
+      chatsDiv.innerHTML = '';
+      // Find all conversations where landlordUid is involved
+      const convSnap = await db.ref('conversations').orderByKey().once('value');
+      convSnap.forEach(conv => {
+        const convId = conv.key; // format: landlordUid_tenantUid
+        if (convId.startsWith(landlordUid+'_')) {
+          const tenantId = convId.split('_')[1];
+          db.ref('users/'+tenantId).once('value').then(tSnap => {
+            if (tSnap.exists()) {
+              const t = tSnap.val();
+              const item = document.createElement('div');
+              item.className = 'chat-item';
+              item.setAttribute('data-tenant', tenantId);
+              item.innerHTML = `<img src="${t.photo||'https://via.placeholder.com/44'}"><div><h4>${t.name||'Tenant'}</h4><p>${t.phone||''}</p></div>`;
+              item.addEventListener('click', () => openChat(tenantId, t));
+              chatsDiv.appendChild(item);
+            }
+          });
+        }
       });
     }
 
-    // chat dummy (to be filled with real messages from tenant.html)
-    async function loadChats() {
-      const chats = document.getElementById('chatList');
-      chats.innerHTML = '<div class="chat-item"><i class="fas fa-user-circle" style="font-size:3rem;"></i><div><h4>tenant john</h4><p>interested in your house...</p></div></div>' +
-        '<div class="chat-item"><i class="fas fa-user-circle" style="font-size:3rem;"></i><div><h4>tenant mary</h4><p>when can i view?</p></div></div>';
+    function openChat(tenantId, tenantData) {
+      selectedTenantId = tenantId;
+      document.getElementById('chatWindow').style.display = 'block';
+      loadMessages(tenantId);
     }
 
-    // properties list (from landlord's posts, with toggle)
+    async function loadMessages(tenantId) {
+      const convId = landlordUid + '_' + tenantId;
+      const msgSnap = await db.ref('conversations/'+convId+'/messages').orderByChild('timestamp').once('value');
+      const msgs = [];
+      msgSnap.forEach(m => msgs.push(m.val()));
+      const container = document.getElementById('messagesContainer');
+      container.innerHTML = '';
+      msgs.forEach(m => {
+        const div = document.createElement('div');
+        div.className = `message-bubble ${m.sender === landlordUid ? 'landlord' : 'tenant'}`;
+        div.innerHTML = `<div class="bubble">${m.text}</div>`;
+        container.appendChild(div);
+      });
+      container.scrollTop = container.scrollHeight;
+    }
+
+    window.sendMessage = async () => {
+      if (!selectedTenantId) return;
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      const convId = landlordUid + '_' + selectedTenantId;
+      await db.ref('conversations/'+convId+'/messages').push({
+        sender: landlordUid,
+        text: text,
+        timestamp: Date.now()
+      });
+      input.value = '';
+      loadMessages(selectedTenantId);
+    };
+
+    // ---------- PROPERTIES RENTED ----------
     async function loadProperties() {
       const propDiv = document.getElementById('propertyList');
       propDiv.innerHTML = '';
@@ -701,74 +801,63 @@
         const div = document.createElement('div');
         div.className = 'prop-item';
         div.innerHTML = `
-          <div><strong>${p.description.substring(0,30)}...</strong><br>${p.price}</div>
-          <div class="status-badge" id="status-${ch.key}">${p.rented ? 'Rented' : 'Available'}</div>
+          <div><strong>${p.description.substring(0,20)}…</strong><br>${p.price}</div>
+          <span class="status-badge">${p.rented ? 'Rented' : 'Available'}</span>
           <div class="toggle-switch ${p.rented ? 'active':''}" data-id="${ch.key}" onclick="toggleRent('${ch.key}')"></div>
         `;
         propDiv.appendChild(div);
       });
     }
+
     window.toggleRent = async (postId) => {
       const snap = await db.ref('posts/'+postId).once('value');
-      const current = snap.val().rented || false;
-      await db.ref('posts/'+postId).update({ rented: !current });
+      const rented = snap.val().rented || false;
+      await db.ref('posts/'+postId).update({ rented: !rented });
       loadProperties();
     };
 
-    // settings update
-    function updateSettings() {
-      const name = document.getElementById('settingsName').value;
-      const phone = document.getElementById('settingsPhone').value;
-      const city = document.getElementById('settingsCity').value;
-      db.ref('users/'+landlordUid).update({ name, phone, city }).then(() => {
-        landlordProfile = { ...landlordProfile, name, phone, city };
-        showToast('profile updated');
-      });
-    }
-
-    // profile photo change via cloudinary (settings)
-    window.openCloudinaryFor = (role) => {
+    // ---------- SETTINGS ----------
+    window.openCloudinaryFor = () => {
       const widget = cloudinary.createUploadWidget({
-        cloudName: CLOUDINARY_CONFIG.cloudName,
-        uploadPreset: CLOUDINARY_CONFIG.uploadPreset,
-        sources: ['local', 'camera'],
-        cropping: true, croppingAspectRatio: 1
+        cloudName: CLOUDINARY.cloudName, uploadPreset: CLOUDINARY.uploadPreset, cropping: true, croppingAspectRatio:1
       }, (error, result) => {
         if (!error && result && result.event === 'success') {
           const url = result.info.secure_url;
           db.ref('users/'+landlordUid).update({ photo: url });
-          landlordProfile.photo = url;
-          renderLandlordData();
-          showToast('profile photo updated');
+          currentLandlord.photo = url;
+          renderLandlordInfo();
+          showToast('photo updated');
         }
       });
       widget.open();
     };
 
-    // navigation
+    function updateSettings() {
+      const name = document.getElementById('settingsName').value;
+      const phone = document.getElementById('settingsPhone').value;
+      const city = document.getElementById('settingsCity').value;
+      db.ref('users/'+landlordUid).update({ name, phone, city }).then(() => {
+        currentLandlord = {...currentLandlord, name, phone, city};
+        showToast('profile updated');
+      });
+    }
+
+    // ---------- NAVIGATION ----------
     document.querySelectorAll('.nav-item').forEach(item => {
-      item.addEventListener('click', (e) => {
+      item.addEventListener('click', () => {
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         item.classList.add('active');
-        const section = item.dataset.section;
+        const sec = item.dataset.sec;
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        if (section === 'home') document.getElementById('sectionHome').classList.add('active');
-        if (section === 'chat') document.getElementById('sectionChat').classList.add('active');
-        if (section === 'properties') document.getElementById('sectionProperties').classList.add('active');
-        if (section === 'settings') document.getElementById('sectionSettings').classList.add('active');
+        document.getElementById('section' + sec.charAt(0).toUpperCase() + sec.slice(1)).classList.add('active');
       });
     });
 
     function showToast(msg) {
-      const toast = document.getElementById('toast');
-      toast.innerHTML = `<div style="background:var(--purple); color:white; padding:14px 28px; border-radius:60px;">${msg}</div>`;
-      setTimeout(() => toast.innerHTML = '', 2000);
+      const t = document.getElementById('toast');
+      t.style.display = 'block'; t.innerText = msg;
+      setTimeout(() => t.style.display = 'none', 2000);
     }
-
-    // after DOM ready, init map picker
-    window.addEventListener('DOMContentLoaded', () => {
-      initMapPicker();
-    });
   </script>
 </body>
 </html>
