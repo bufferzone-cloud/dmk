@@ -12,7 +12,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <style>
-    /* identical to landlord's style but with small adjustments for tenant */
+    /* identical to landlord's style with tenant-specific adjustments */
     * {
       margin: 0;
       padding: 0;
@@ -259,6 +259,7 @@
       padding: 0 16px;
       font-size: 0.7rem;
       font-weight: 700;
+      cursor: pointer;
     }
     .comments-list {
       margin-top: 8px;
@@ -325,6 +326,13 @@
       font-size: 0.75rem;
       background: var(--purple-soft);
       border: 1.5px solid var(--purple-light);
+      word-break: break-word;
+    }
+    .bubble img {
+      max-width: 100%;
+      border-radius: 12px;
+      margin-top: 5px;
+      cursor: pointer;
     }
     .message-bubble.tenant .bubble {
       background: var(--purple);
@@ -335,12 +343,14 @@
       display: flex;
       gap: 6px;
       margin-top: 10px;
+      align-items: center;
     }
     .chat-input-area input {
       flex: 1;
       padding: 10px 14px;
       border: 1.5px solid var(--purple-light);
       border-radius: 40px;
+      font-size: 0.8rem;
     }
     .chat-input-area button {
       background: var(--purple);
@@ -349,6 +359,18 @@
       border-radius: 50%;
       width: 42px;
       height: 42px;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    .chat-image-btn {
+      background: white;
+      border: 1.5px solid var(--purple);
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      color: var(--purple);
+      font-size: 1.2rem;
+      cursor: pointer;
     }
     .settings-card {
       background: white;
@@ -409,7 +431,7 @@
     <div class="chip active" data-filter="all">All</div>
     <div class="chip" data-filter="landlord">Landlords</div>
     <div class="chip" data-filter="agent">Agents</div>
-    <input type="text" class="city-filter" id="cityFilter" placeholder="Filter city" list="zambiaCities">
+    <input type="text" class="city-filter" id="cityFilter" placeholder="Filter by city" list="zambiaCities">
     <datalist id="zambiaCities"><option>Lusaka</option><option>Kitwe</option><option>Ndola</option><option>Livingstone</option></datalist>
   </div>
   <div class="main-scroll">
@@ -421,7 +443,8 @@
       <div id="chatWindow" class="chat-window" style="display: none;">
         <div id="messagesContainer"></div>
         <div class="chat-input-area">
-          <input type="text" id="chatInput" placeholder="message...">
+          <input type="text" id="chatInput" placeholder="Type a message...">
+          <button class="chat-image-btn" onclick="uploadChatImage()"><i class="fas fa-image"></i></button>
           <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
         </div>
       </div>
@@ -470,13 +493,13 @@
     let allPosts = [];
     let currentRoleFilter = 'all';
     let currentCityFilter = '';
-    let selectedPosterId = null;
+    let selectedChatPartnerId = null;
 
     auth.onAuthStateChanged(async (user) => {
       if (!user) { window.location.href = 'login.html'; return; }
       const snap = await db.ref('users/' + user.uid).once('value');
       if (!snap.exists() || snap.val().role !== 'tenant') {
-        alert('Access denied');
+        alert('Access denied. Tenant only.');
         auth.signOut(); window.location.href = 'index.html'; return;
       }
       tenantUid = user.uid;
@@ -552,7 +575,8 @@
       for (const p of posts) {
         const card = document.createElement('div');
         card.className = 'feed-card';
-        // build comments html
+
+        // Build comments list
         let commentsHtml = '';
         if (p.comments && p.comments.length) {
           commentsHtml = '<div class="comments-list">';
@@ -564,6 +588,7 @@
           });
           commentsHtml += '</div>';
         }
+
         card.innerHTML = `
           <div class="card-header">
             <img src="${p.posterPhoto||'https://via.placeholder.com/32'}" onerror="this.src='https://via.placeholder.com/32'">
@@ -607,14 +632,12 @@
       const snap = await postRef.child('likes').once('value');
       const likes = snap.val() || {};
       if (likes[tenantUid]) {
-        // unlike
         delete likes[tenantUid];
         await postRef.update({ likes, likeCount: Object.keys(likes).length });
       } else {
         likes[tenantUid] = true;
         await postRef.update({ likes, likeCount: Object.keys(likes).length });
       }
-      // update UI
       document.getElementById(`likeCount-${postId}`).innerText = Object.keys(likes).length;
     };
 
@@ -638,14 +661,12 @@
       await postRef.child('comments').push(comment);
       input.value = '';
       document.getElementById(`comment-input-${postId}`).style.display = 'none';
-      // reload feed to show new comment
-      loadPosts();
+      loadPosts(); // refresh to show new comment
     };
 
     // Chat
     window.startChat = (posterId, posterName, posterPhoto) => {
-      selectedPosterId = posterId;
-      // switch to chats section
+      selectedChatPartnerId = posterId;
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       document.querySelector('[data-sec="chats"]').classList.add('active');
       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -678,7 +699,7 @@
     }
 
     function openChatWindow(otherId, otherName, otherPhoto) {
-      selectedPosterId = otherId;
+      selectedChatPartnerId = otherId;
       document.getElementById('chatWindow').style.display = 'block';
       loadMessages(otherId);
     }
@@ -693,38 +714,73 @@
       msgs.forEach(m => {
         const div = document.createElement('div');
         div.className = `message-bubble ${m.sender === tenantUid ? 'tenant' : 'other'}`;
-        div.innerHTML = `<div class="bubble">${m.text}</div>`;
+        let content = '';
+        if (m.type === 'image') {
+          content = `<img src="${m.url}" style="max-width:150px; border-radius:12px;" onclick="window.open('${m.url}','_blank')">`;
+        } else {
+          content = m.text;
+        }
+        div.innerHTML = `<div class="bubble">${content}</div>`;
         container.appendChild(div);
       });
       container.scrollTop = container.scrollHeight;
     }
 
     window.sendMessage = async () => {
-      if (!selectedPosterId) return;
+      if (!selectedChatPartnerId) return;
       const input = document.getElementById('chatInput');
       const text = input.value.trim();
       if (!text) return;
-      const convId = tenantUid + '_' + selectedPosterId;
+      const convId = tenantUid + '_' + selectedChatPartnerId;
       await db.ref('conversations/'+convId+'/messages').push({
         sender: tenantUid,
+        type: 'text',
         text: text,
         timestamp: Date.now()
       });
       input.value = '';
-      loadMessages(selectedPosterId);
+      loadMessages(selectedChatPartnerId);
+    };
+
+    window.uploadChatImage = () => {
+      if (!selectedChatPartnerId) { showToast('Select a chat first'); return; }
+      const widget = cloudinary.createUploadWidget({
+        cloudName: CLOUDINARY.cloudName,
+        uploadPreset: CLOUDINARY.uploadPreset,
+        sources: ['local', 'camera'],
+        multiple: false,
+        folder: 'chat_images',
+        resourceType: 'image'
+      }, async (error, result) => {
+        if (!error && result && result.event === 'success') {
+          const url = result.info.secure_url;
+          const convId = tenantUid + '_' + selectedChatPartnerId;
+          await db.ref('conversations/'+convId+'/messages').push({
+            sender: tenantUid,
+            type: 'image',
+            url: url,
+            timestamp: Date.now()
+          });
+          loadMessages(selectedChatPartnerId);
+        }
+      });
+      widget.open();
     };
 
     // Settings
     window.openCloudinaryForProfile = () => {
       const widget = cloudinary.createUploadWidget({
-        cloudName: CLOUDINARY.cloudName, uploadPreset: CLOUDINARY.uploadPreset, cropping: true, croppingAspectRatio:1
+        cloudName: CLOUDINARY.cloudName,
+        uploadPreset: CLOUDINARY.uploadPreset,
+        cropping: true,
+        croppingAspectRatio: 1
       }, (error, result) => {
         if (!error && result && result.event === 'success') {
           const url = result.info.secure_url;
           db.ref('users/'+tenantUid).update({ photo: url });
           currentTenant.photo = url;
           renderTenantInfo();
-          showToast('photo updated');
+          showToast('Profile photo updated');
         }
       });
       widget.open();
@@ -736,7 +792,7 @@
       const city = document.getElementById('settingsCity').value;
       db.ref('users/'+tenantUid).update({ name, phone, city }).then(() => {
         currentTenant = {...currentTenant, name, phone, city};
-        showToast('profile updated');
+        showToast('Profile updated');
       });
     }
     document.getElementById('settingsName').addEventListener('change', updateSettings);
