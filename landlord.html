@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>NZUBO · landlord</title>
-  <!-- Font Awesome 6 -->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Leaflet map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <!-- Cloudinary upload widget -->
   <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
-  <!-- Firebase SDK -->
+  <!-- Firebase SDK compat -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -289,7 +289,7 @@
     .action-btn i {
       font-size: 1.2rem;
     }
-    /* ----- likes / comments popup (simple) ----- */
+    /* ----- likes / comments list (clickable) ----- */
     .likes-list, .comments-list {
       margin-top: 8px;
       padding: 8px;
@@ -340,7 +340,7 @@
       border: 1.5px solid var(--purple-light);
       padding: 12px;
       margin-top: 12px;
-      max-height: 280px;
+      max-height: 300px;
       overflow-y: auto;
     }
     .message-bubble {
@@ -360,6 +360,13 @@
       font-size: 0.75rem;
       background: var(--purple-soft);
       border: 1.5px solid var(--purple-light);
+      word-break: break-word;
+    }
+    .bubble img {
+      max-width: 100%;
+      border-radius: 12px;
+      margin-top: 5px;
+      cursor: pointer;
     }
     .message-bubble.landlord .bubble {
       background: var(--purple);
@@ -370,12 +377,14 @@
       display: flex;
       gap: 6px;
       margin-top: 10px;
+      align-items: center;
     }
     .chat-input-area input {
       flex: 1;
       padding: 10px 14px;
       border: 1.5px solid var(--purple-light);
       border-radius: 40px;
+      font-size: 0.8rem;
     }
     .chat-input-area button {
       background: var(--purple);
@@ -385,6 +394,17 @@
       width: 42px;
       height: 42px;
       font-size: 1.2rem;
+      cursor: pointer;
+    }
+    .chat-image-btn {
+      background: white;
+      border: 1.5px solid var(--purple);
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      color: var(--purple);
+      font-size: 1.2rem;
+      cursor: pointer;
     }
     .prop-item {
       background: white;
@@ -490,7 +510,8 @@
       <div id="chatWindow" class="chat-window" style="display: none;">
         <div id="messagesContainer"></div>
         <div class="chat-input-area">
-          <input type="text" id="chatInput" placeholder="message...">
+          <input type="text" id="chatInput" placeholder="Type a message...">
+          <button class="chat-image-btn" onclick="uploadChatImage()"><i class="fas fa-image"></i></button>
           <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
         </div>
       </div>
@@ -524,6 +545,7 @@
   <div id="toast" class="toast-msg"></div>
 
   <script>
+    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyCzf9dZFB0l7ZEPLJ4tpo4bSjgQNW3VTus",
       authDomain: "dmkl-8ea2c.firebaseapp.com",
@@ -537,20 +559,23 @@
     const auth = firebase.auth();
     const db = firebase.database();
 
+    // Cloudinary settings
     const CLOUDINARY = { cloudName: 'dd3lcymrk', uploadPreset: 'h3eyhc2o', folder: 'zynapse/profiles' };
 
+    // Global variables
     let currentLandlord = null;
     let landlordUid = null;
     let postPhotos = [], postVideo = null;
-    let lat = -15.4167, lng = 28.2833;
+    let lat = -15.4167, lng = 28.2833; // Lusaka default
     let mapPicker, marker;
-    let selectedTenantId = null; // for chat
+    let selectedChatPartnerId = null; // for chat
 
+    // Auth state observer
     auth.onAuthStateChanged(async (user) => {
       if (!user) { window.location.href = 'login.html'; return; }
       const snap = await db.ref('users/' + user.uid).once('value');
       if (!snap.exists() || snap.val().role !== 'landlord') {
-        alert('Access denied');
+        alert('Access denied. Landlord only.');
         auth.signOut(); window.location.href = 'index.html'; return;
       }
       landlordUid = user.uid;
@@ -562,6 +587,7 @@
       initMapPicker();
     });
 
+    // Render landlord info in header and settings
     function renderLandlordInfo() {
       document.getElementById('landlordThumb').src = currentLandlord.photo || 'https://via.placeholder.com/36?text=🏠';
       document.getElementById('settingsPhoto').src = currentLandlord.photo || 'https://via.placeholder.com/52?text=🏠';
@@ -570,11 +596,13 @@
       document.getElementById('settingsCity').value = currentLandlord.city || '';
     }
 
+    // Toggle post creator dropdown
     document.getElementById('togglePostBtn').addEventListener('click', () => {
       const cont = document.getElementById('postCreatorContainer');
       cont.style.display = cont.style.display === 'none' ? 'block' : 'none';
     });
 
+    // Initialize map picker for post creation
     function initMapPicker() {
       if (mapPicker) return;
       mapPicker = L.map('mapPicker').setView([lat, lng], 13);
@@ -582,11 +610,12 @@
       marker = L.marker([lat, lng], { draggable: true }).addTo(mapPicker);
       marker.on('dragend', (e) => { const p = e.target.getLatLng(); lat = p.lat; lng = p.lng; });
       mapPicker.on('click', (e) => { marker.setLatLng(e.latlng); lat = e.latlng.lat; lng = e.latlng.lng; });
+      // Simple search button
       const searchBtn = document.createElement('button');
       searchBtn.innerHTML = '🔍 search';
       searchBtn.style.position = 'absolute'; searchBtn.style.top = '5px'; searchBtn.style.left = '10px'; searchBtn.style.zIndex = 1000;
       searchBtn.onclick = () => {
-        const place = prompt('Zambia city');
+        const place = prompt('Enter Zambian city name');
         if (!place) return;
         fetch(`https://nominatim.openstreetmap.org/search?q=${place}, Zambia&format=json&limit=1`)
           .then(r => r.json()).then(data => {
@@ -596,6 +625,7 @@
       document.getElementById('mapPicker').appendChild(searchBtn);
     }
 
+    // Cloudinary media uploader for post photos/video
     function openMediaUploader() {
       const widget = cloudinary.createUploadWidget({
         cloudName: CLOUDINARY.cloudName,
@@ -613,7 +643,7 @@
             document.getElementById('videoLabel').innerHTML = '<i class="fas fa-video"></i> video ready';
           } else {
             if (postPhotos.length < 4) { postPhotos.push(info.secure_url); renderPhotoPreviews(); }
-            else alert('max 4 photos');
+            else alert('Maximum 4 photos allowed');
           }
         }
       });
@@ -626,10 +656,11 @@
       postPhotos.forEach(url => { strip.innerHTML += `<img src="${url}" class="preview-thumb">`; });
     }
 
+    // Post a new property
     async function postProperty() {
       const desc = document.getElementById('postDesc').value.trim();
       const price = document.getElementById('priceInput').value.trim();
-      if (!desc || !price || postPhotos.length === 0) { showToast('Description, price & photo required'); return; }
+      if (!desc || !price || postPhotos.length === 0) { showToast('Description, price & at least one photo required'); return; }
       const post = {
         posterId: landlordUid,
         posterName: currentLandlord.name,
@@ -642,55 +673,63 @@
         video: postVideo || null,
         location: { lat, lng },
         timestamp: Date.now(),
-        likes: {},
+        likes: {},          // object: { uid: true }
         likeCount: 0,
-        comments: []
+        comments: []        // array of comment objects
       };
       await db.ref('posts').push(post);
-      showToast('Posted!');
-      document.getElementById('postDesc').value = ''; document.getElementById('priceInput').value = '';
-      postPhotos = []; postVideo = null; document.getElementById('photoPreviewStrip').innerHTML = ''; document.getElementById('videoLabel').innerHTML = '';
+      showToast('Property posted successfully!');
+      // Reset form
+      document.getElementById('postDesc').value = '';
+      document.getElementById('priceInput').value = '';
+      postPhotos = []; postVideo = null;
+      document.getElementById('photoPreviewStrip').innerHTML = '';
+      document.getElementById('videoLabel').innerHTML = '';
       loadFeed();
     }
 
+    // Load feed (only landlord's own posts)
     async function loadFeed() {
       const snap = await db.ref('posts').orderByChild('posterId').equalTo(landlordUid).once('value');
       const posts = [];
       snap.forEach(ch => posts.push({ id: ch.key, ...ch.val() }));
-      posts.sort((a,b)=>b.timestamp - a.timestamp);
+      posts.sort((a,b) => b.timestamp - a.timestamp);
       const feed = document.getElementById('feedContainer');
       feed.innerHTML = '';
       for (const p of posts) {
         const card = document.createElement('div');
         card.className = 'feed-card';
-        // build likes list
+
+        // Build likes list with user details (clickable)
         let likesHtml = '';
         if (p.likes) {
           const likeUids = Object.keys(p.likes);
           if (likeUids.length > 0) {
-            likesHtml = '<div class="likes-list" style="margin-bottom:6px;">';
+            likesHtml = '<div class="likes-list"><strong>Liked by:</strong>';
             for (let uid of likeUids) {
               const userSnap = await db.ref('users/'+uid).once('value');
               const user = userSnap.val() || { name: 'Unknown', photo: '' };
-              likesHtml += `<div class="likes-item" data-uid="${uid}" onclick="startChatFromUser('${uid}')">
+              likesHtml += `<div class="likes-item" onclick="startChatWithUser('${uid}')">
                 <img src="${user.photo||'https://via.placeholder.com/24'}"> <span>${user.name||'User'}</span>
               </div>`;
             }
             likesHtml += '</div>';
           }
         }
-        // build comments
+
+        // Build comments list with user details (clickable)
         let commentsHtml = '';
         if (p.comments && p.comments.length) {
-          commentsHtml = '<div class="comments-list">';
+          commentsHtml = '<div class="comments-list"><strong>Comments:</strong>';
           p.comments.forEach(c => {
-            commentsHtml += `<div class="comment-item" data-uid="${c.uid}" onclick="startChatFromUser('${c.uid}')">
+            commentsHtml += `<div class="comment-item" onclick="startChatWithUser('${c.uid}')">
               <img src="${c.photo||'https://via.placeholder.com/24'}">
               <span class="comment-text"><strong>${c.name}:</strong> ${c.text}</span>
             </div>`;
           });
           commentsHtml += '</div>';
         }
+
         card.innerHTML = `
           <div class="card-header">
             <img src="${p.posterPhoto||'https://via.placeholder.com/32'}" onerror="this.src='https://via.placeholder.com/32'">
@@ -711,6 +750,7 @@
           ${commentsHtml}
         `;
         feed.appendChild(card);
+        // Initialize map for this post
         setTimeout(() => {
           if (p.location) {
             const m = L.map(`map-${p.id}`).setView([p.location.lat, p.location.lng], 13);
@@ -721,12 +761,13 @@
       }
     }
 
-    window.startChatFromUser = (uid) => {
+    // Start chat with a user (from like/comment click)
+    window.startChatWithUser = (uid) => {
       db.ref('users/'+uid).once('value').then(snap => {
         if (snap.exists()) {
           const user = snap.val();
-          selectedTenantId = uid;
-          // switch to chat section
+          selectedChatPartnerId = uid;
+          // Switch to chat section
           document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
           document.querySelector('[data-sec="chat"]').classList.add('active');
           document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -736,7 +777,7 @@
       });
     };
 
-    // ---------- CHAT ----------
+    // ----- Chat functions -----
     async function loadChatList() {
       const chatsDiv = document.getElementById('chatList');
       chatsDiv.innerHTML = '';
@@ -762,7 +803,7 @@
     }
 
     function openChatWindow(otherId, otherName, otherPhoto) {
-      selectedTenantId = otherId;
+      selectedChatPartnerId = otherId;
       document.getElementById('chatWindow').style.display = 'block';
       loadMessages(otherId);
     }
@@ -777,28 +818,62 @@
       msgs.forEach(m => {
         const div = document.createElement('div');
         div.className = `message-bubble ${m.sender === landlordUid ? 'landlord' : 'other'}`;
-        div.innerHTML = `<div class="bubble">${m.text}</div>`;
+        let content = '';
+        if (m.type === 'image') {
+          content = `<img src="${m.url}" style="max-width:150px; border-radius:12px;" onclick="window.open('${m.url}','_blank')">`;
+        } else {
+          content = m.text;
+        }
+        div.innerHTML = `<div class="bubble">${content}</div>`;
         container.appendChild(div);
       });
       container.scrollTop = container.scrollHeight;
     }
 
+    // Send text message
     window.sendMessage = async () => {
-      if (!selectedTenantId) return;
+      if (!selectedChatPartnerId) return;
       const input = document.getElementById('chatInput');
       const text = input.value.trim();
       if (!text) return;
-      const convId = landlordUid + '_' + selectedTenantId;
+      const convId = landlordUid + '_' + selectedChatPartnerId;
       await db.ref('conversations/'+convId+'/messages').push({
         sender: landlordUid,
+        type: 'text',
         text: text,
         timestamp: Date.now()
       });
       input.value = '';
-      loadMessages(selectedTenantId);
+      loadMessages(selectedChatPartnerId);
     };
 
-    // ---------- PROPERTIES ----------
+    // Upload image for chat
+    window.uploadChatImage = () => {
+      if (!selectedChatPartnerId) { showToast('Select a chat first'); return; }
+      const widget = cloudinary.createUploadWidget({
+        cloudName: CLOUDINARY.cloudName,
+        uploadPreset: CLOUDINARY.uploadPreset,
+        sources: ['local', 'camera'],
+        multiple: false,
+        folder: 'chat_images',
+        resourceType: 'image'
+      }, async (error, result) => {
+        if (!error && result && result.event === 'success') {
+          const url = result.info.secure_url;
+          const convId = landlordUid + '_' + selectedChatPartnerId;
+          await db.ref('conversations/'+convId+'/messages').push({
+            sender: landlordUid,
+            type: 'image',
+            url: url,
+            timestamp: Date.now()
+          });
+          loadMessages(selectedChatPartnerId);
+        }
+      });
+      widget.open();
+    };
+
+    // ----- Properties (rented/sold/available) -----
     async function loadProperties() {
       const propDiv = document.getElementById('propertyList');
       propDiv.innerHTML = '';
@@ -824,17 +899,20 @@
       showToast('Status updated');
     };
 
-    // ---------- SETTINGS ----------
+    // ----- Settings -----
     window.openCloudinaryForProfile = () => {
       const widget = cloudinary.createUploadWidget({
-        cloudName: CLOUDINARY.cloudName, uploadPreset: CLOUDINARY.uploadPreset, cropping: true, croppingAspectRatio:1
+        cloudName: CLOUDINARY.cloudName,
+        uploadPreset: CLOUDINARY.uploadPreset,
+        cropping: true,
+        croppingAspectRatio: 1
       }, (error, result) => {
         if (!error && result && result.event === 'success') {
           const url = result.info.secure_url;
           db.ref('users/'+landlordUid).update({ photo: url });
           currentLandlord.photo = url;
           renderLandlordInfo();
-          showToast('photo updated');
+          showToast('Profile photo updated');
         }
       });
       widget.open();
@@ -846,7 +924,7 @@
       const city = document.getElementById('settingsCity').value;
       db.ref('users/'+landlordUid).update({ name, phone, city }).then(() => {
         currentLandlord = {...currentLandlord, name, phone, city};
-        showToast('profile updated');
+        showToast('Profile updated');
       });
     }
     document.getElementById('settingsName').addEventListener('change', updateSettings);
@@ -855,6 +933,7 @@
 
     window.logout = () => auth.signOut().then(() => window.location.href = 'login.html');
 
+    // Navigation
     document.querySelectorAll('.nav-item').forEach(item => {
       item.addEventListener('click', () => {
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
