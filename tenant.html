@@ -4,25 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>NZUBO · tenant</title>
-  <!-- Font Awesome 6 (minimal) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Leaflet (lightweight map) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- Cloudinary upload widget -->
-  <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
-  <!-- Firebase SDK compat (v9) -->
+  <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <style>
-    /* ----- RESET & TINY VARIABLES (mobile ultra compact) ----- */
+    /* identical to landlord's style but with small adjustments for tenant */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
     :root {
       --purple: #7c3aed;
@@ -42,14 +38,12 @@
       color: #1a1a24;
       font-size: 13px;
     }
-    /* ----- header (very small) ----- */
     .header {
       padding: 8px 14px 4px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       border-bottom: 1.5px solid var(--purple-light);
-      background: var(--white);
     }
     .logo-wrap {
       display: flex;
@@ -61,7 +55,6 @@
       font-weight: 800;
       color: var(--purple);
       letter-spacing: -1px;
-      line-height: 1;
     }
     .home-icon {
       background: var(--purple-soft);
@@ -74,7 +67,6 @@
       font-size: 1.3rem;
       color: var(--purple);
       border: 1.5px solid var(--purple-light);
-      box-shadow: 0 2px 0 #ddd6fe;
     }
     .profile-right {
       display: flex;
@@ -93,21 +85,17 @@
       font-size: 0.8rem;
       color: var(--purple);
     }
-    /* ----- filter chips (horizontal scroll) ----- */
     .filter-bar {
       display: flex;
       gap: 8px;
       padding: 12px 14px 8px;
       overflow-x: auto;
       white-space: nowrap;
-      -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
     }
-    .filter-bar::-webkit-scrollbar {
-      display: none;
-    }
+    .filter-bar::-webkit-scrollbar { display: none; }
     .chip {
-      background: var(--white);
+      background: white;
       border: 1.5px solid var(--purple-light);
       border-radius: 40px;
       padding: 6px 16px;
@@ -123,7 +111,7 @@
       border-color: var(--purple);
     }
     .city-filter {
-      background: var(--white);
+      background: white;
       border: 1.5px solid var(--purple-light);
       border-radius: 40px;
       padding: 6px 16px;
@@ -131,14 +119,12 @@
       width: 130px;
       flex-shrink: 0;
     }
-    /* ----- main scroll area ----- */
     .main-scroll {
       flex: 1;
       overflow-y: auto;
       padding: 0 12px 75px;
       background: var(--gray-bg);
     }
-    /* ----- bottom nav (tiny) ----- */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -151,7 +137,6 @@
       padding: 4px 10px 16px;
       border-top: 1.5px solid var(--purple-light);
       border-radius: 24px 24px 0 0;
-      box-shadow: 0 -2px 10px rgba(124,58,237,0.1);
       z-index: 100;
     }
     .nav-item {
@@ -163,20 +148,11 @@
       font-weight: 600;
       cursor: pointer;
     }
-    .nav-item i {
-      font-size: 1.4rem;
-    }
-    .nav-item.active {
-      color: var(--purple);
-    }
-    /* ----- sections ----- */
-    .section {
-      display: none;
-    }
-    .section.active {
-      display: block;
-    }
-    /* ----- feed cards (ultra compact) ----- */
+    .nav-item i { font-size: 1.4rem; }
+    .nav-item.active { color: var(--purple); }
+    .section { display: none; }
+    .section.active { display: block; }
+    /* feed cards */
     .feed-card {
       background: white;
       border-radius: var(--radius);
@@ -200,10 +176,6 @@
     .card-header h4 {
       font-size: 0.8rem;
     }
-    .card-header small {
-      font-size: 0.6rem;
-      color: gray;
-    }
     .role-city {
       font-size: 0.65rem;
       background: var(--purple-soft);
@@ -212,10 +184,7 @@
       display: inline-block;
       margin-left: 6px;
     }
-    .desc-text {
-      font-size: 0.8rem;
-      margin: 4px 0 2px;
-    }
+    .desc-text { font-size: 0.8rem; margin: 4px 0 2px; }
     .price-badge {
       background: var(--purple-soft);
       padding: 3px 10px;
@@ -245,10 +214,9 @@
     }
     .post-actions {
       display: flex;
-      gap: 16px;
-      margin-top: 8px;
+      gap: 20px;
+      margin: 8px 0;
       align-items: center;
-      flex-wrap: wrap;
     }
     .action-btn {
       display: flex;
@@ -259,9 +227,7 @@
       font-size: 0.75rem;
       cursor: pointer;
     }
-    .action-btn i {
-      font-size: 1.2rem;
-    }
+    .action-btn i { font-size: 1.2rem; }
     .chat-btn {
       background: var(--purple);
       color: white;
@@ -273,7 +239,53 @@
       margin-left: auto;
       cursor: pointer;
     }
-    /* ----- chat list ----- */
+    .comment-input {
+      display: flex;
+      gap: 6px;
+      margin: 8px 0;
+    }
+    .comment-input input {
+      flex: 1;
+      padding: 8px 14px;
+      border: 1.5px solid var(--purple-light);
+      border-radius: 40px;
+      font-size: 0.75rem;
+    }
+    .comment-submit {
+      background: var(--purple);
+      color: white;
+      border: none;
+      border-radius: 40px;
+      padding: 0 16px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+    .comments-list {
+      margin-top: 8px;
+      padding: 8px;
+      background: var(--purple-soft);
+      border-radius: 16px;
+      border: 1.5px solid var(--purple-light);
+    }
+    .comment-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+    }
+    .comment-item img {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1px solid var(--purple);
+    }
+    .comment-text {
+      background: white;
+      padding: 4px 10px;
+      border-radius: 30px;
+      font-size: 0.7rem;
+    }
+    /* chat list */
     .chat-item {
       background: white;
       border-radius: 40px;
@@ -291,13 +303,6 @@
       border-radius: 50%;
       border: 1.5px solid var(--purple);
     }
-    .chat-item h4 {
-      font-size: 0.85rem;
-    }
-    .chat-item p {
-      font-size: 0.7rem;
-      color: #4b5563;
-    }
     .chat-window {
       background: white;
       border-radius: 24px;
@@ -311,12 +316,8 @@
       display: flex;
       margin-bottom: 8px;
     }
-    .message-bubble.tenant {
-      justify-content: flex-end;
-    }
-    .message-bubble.other {
-      justify-content: flex-start;
-    }
+    .message-bubble.tenant { justify-content: flex-end; }
+    .message-bubble.other { justify-content: flex-start; }
     .bubble {
       max-width: 70%;
       padding: 8px 14px;
@@ -340,7 +341,6 @@
       padding: 10px 14px;
       border: 1.5px solid var(--purple-light);
       border-radius: 40px;
-      font-size: 0.8rem;
     }
     .chat-input-area button {
       background: var(--purple);
@@ -349,9 +349,7 @@
       border-radius: 50%;
       width: 42px;
       height: 42px;
-      font-size: 1.2rem;
     }
-    /* ----- settings ----- */
     .settings-card {
       background: white;
       border-radius: 28px;
@@ -371,8 +369,6 @@
       padding: 12px;
       border: 1.5px solid var(--purple-light);
       border-radius: 40px;
-      margin-top: 3px;
-      font-size: 0.8rem;
     }
     .logout-btn {
       background: white;
@@ -382,7 +378,6 @@
       padding: 12px;
       width: 100%;
       font-weight: 700;
-      font-size: 0.9rem;
       margin-top: 20px;
       cursor: pointer;
     }
@@ -394,7 +389,6 @@
       text-align: center;
       padding: 10px;
       border-radius: 60px;
-      font-size: 0.8rem;
       z-index: 200;
       display: none;
     }
@@ -411,25 +405,17 @@
       <span id="tenantName"></span>
     </div>
   </div>
-
-  <!-- filter chips -->
   <div class="filter-bar">
     <div class="chip active" data-filter="all">All</div>
     <div class="chip" data-filter="landlord">Landlords</div>
     <div class="chip" data-filter="agent">Agents</div>
-    <input type="text" class="city-filter" id="cityFilter" placeholder="Filter by city" list="zambiaCities">
-    <datalist id="zambiaCities">
-      <option>Lusaka</option><option>Kitwe</option><option>Ndola</option><option>Livingstone</option><option>Kabwe</option>
-    </datalist>
+    <input type="text" class="city-filter" id="cityFilter" placeholder="Filter city" list="zambiaCities">
+    <datalist id="zambiaCities"><option>Lusaka</option><option>Kitwe</option><option>Ndola</option><option>Livingstone</option></datalist>
   </div>
-
-  <div class="main-scroll" id="mainScroll">
-    <!-- HOME SECTION (feed) -->
+  <div class="main-scroll">
     <div class="section active" id="sectionHome">
       <div id="feedContainer"></div>
     </div>
-
-    <!-- CHATS SECTION -->
     <div class="section" id="sectionChats">
       <div id="chatList" class="chat-list"></div>
       <div id="chatWindow" class="chat-window" style="display: none;">
@@ -440,8 +426,6 @@
         </div>
       </div>
     </div>
-
-    <!-- SETTINGS SECTION -->
     <div class="section" id="sectionSettings">
       <div class="settings-card">
         <div class="settings-field">
@@ -458,18 +442,14 @@
       </div>
     </div>
   </div>
-
-  <!-- bottom nav -->
   <div class="bottom-nav">
     <div class="nav-item active" data-sec="home"><i class="fas fa-home"></i><span>Home</span></div>
     <div class="nav-item" data-sec="chats"><i class="fas fa-comment"></i><span>Chats</span></div>
     <div class="nav-item" data-sec="settings"><i class="fas fa-user"></i><span>Settings</span></div>
   </div>
-
   <div id="toast" class="toast-msg"></div>
 
   <script>
-    // Firebase config (dmkl)
     const firebaseConfig = {
       apiKey: "AIzaSyCzf9dZFB0l7ZEPLJ4tpo4bSjgQNW3VTus",
       authDomain: "dmkl-8ea2c.firebaseapp.com",
@@ -483,22 +463,20 @@
     const auth = firebase.auth();
     const db = firebase.database();
 
-    // Cloudinary
     const CLOUDINARY = { cloudName: 'dd3lcymrk', uploadPreset: 'h3eyhc2o', folder: 'zynapse/profiles' };
 
-    // Global state
     let currentTenant = null;
     let tenantUid = null;
-    let selectedPosterId = null; // for chat
-    let selectedPosterRole = null;
-    let allPosts = []; // store for filtering
+    let allPosts = [];
+    let currentRoleFilter = 'all';
+    let currentCityFilter = '';
+    let selectedPosterId = null;
 
-    // Auth + role check
     auth.onAuthStateChanged(async (user) => {
       if (!user) { window.location.href = 'login.html'; return; }
       const snap = await db.ref('users/' + user.uid).once('value');
       if (!snap.exists() || snap.val().role !== 'tenant') {
-        alert('Access denied. Tenant only.');
+        alert('Access denied');
         auth.signOut(); window.location.href = 'index.html'; return;
       }
       tenantUid = user.uid;
@@ -517,10 +495,7 @@
       document.getElementById('settingsCity').value = currentTenant.city || '';
     }
 
-    // ---------- FILTERING ----------
-    let currentRoleFilter = 'all';
-    let currentCityFilter = '';
-
+    // Filtering
     document.querySelectorAll('.chip').forEach(chip => {
       chip.addEventListener('click', () => {
         document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
@@ -529,7 +504,6 @@
         filterPosts();
       });
     });
-
     document.getElementById('cityFilter').addEventListener('input', (e) => {
       currentCityFilter = e.target.value.toLowerCase();
       filterPosts();
@@ -537,61 +511,64 @@
 
     function filterPosts() {
       const filtered = allPosts.filter(post => {
-        // role filter
         if (currentRoleFilter !== 'all' && post.role !== currentRoleFilter) return false;
-        // city filter
         if (currentCityFilter && !post.city?.toLowerCase().includes(currentCityFilter)) return false;
         return true;
       });
       renderFeed(filtered);
     }
 
-    // ---------- LOAD POSTS (from landlords and agents) ----------
     async function loadPosts() {
-      const postsSnap = await db.ref('posts').once('value');
-      const posts = [];
-      postsSnap.forEach(child => {
+      const snap = await db.ref('posts').once('value');
+      allPosts = [];
+      snap.forEach(child => {
         const p = child.val();
-        // Determine role and poster id (handle both old and new structure)
-        let role = p.role || (p.landlordUid ? 'landlord' : (p.agentUid ? 'agent' : null));
-        let posterId = p.posterId || p.landlordUid || p.agentUid;
-        let posterName = p.posterName || p.landlordName || p.agentName || 'Property owner';
-        let posterPhoto = p.posterPhoto || p.landlordPhoto || p.agentPhoto || '';
-        let city = p.city || ''; // if post includes city (from landlord/agent)
-        if (!role || !posterId) return; // skip invalid
-        posts.push({
+        if (!p.posterId) return;
+        allPosts.push({
           id: child.key,
-          posterId,
-          role,
-          posterName,
-          posterPhoto,
+          posterId: p.posterId,
+          role: p.role || 'unknown',
+          posterName: p.posterName,
+          posterPhoto: p.posterPhoto,
           description: p.description,
           price: p.price,
           photos: p.photos || [],
           video: p.video,
           location: p.location,
           timestamp: p.timestamp,
-          likes: p.likes || 0,
-          city: city
+          likeCount: p.likeCount || 0,
+          likes: p.likes || {},
+          comments: p.comments || [],
+          city: p.city || ''
         });
       });
-      // sort by newest
-      posts.sort((a,b) => b.timestamp - a.timestamp);
-      allPosts = posts;
+      allPosts.sort((a,b) => b.timestamp - a.timestamp);
       filterPosts();
     }
 
-    function renderFeed(posts) {
+    async function renderFeed(posts) {
       const feed = document.getElementById('feedContainer');
       feed.innerHTML = '';
-      posts.forEach(p => {
+      for (const p of posts) {
         const card = document.createElement('div');
         card.className = 'feed-card';
+        // build comments html
+        let commentsHtml = '';
+        if (p.comments && p.comments.length) {
+          commentsHtml = '<div class="comments-list">';
+          p.comments.forEach(c => {
+            commentsHtml += `<div class="comment-item">
+              <img src="${c.photo||'https://via.placeholder.com/24'}">
+              <span class="comment-text"><strong>${c.name}:</strong> ${c.text}</span>
+            </div>`;
+          });
+          commentsHtml += '</div>';
+        }
         card.innerHTML = `
           <div class="card-header">
-            <img src="${p.posterPhoto || 'https://via.placeholder.com/32'}" onerror="this.src='https://via.placeholder.com/32'">
+            <img src="${p.posterPhoto||'https://via.placeholder.com/32'}" onerror="this.src='https://via.placeholder.com/32'">
             <div>
-              <h4>${p.posterName} <span class="role-city">${p.role} · ${p.city || 'Unknown city'}</span></h4>
+              <h4>${p.posterName} <span class="role-city">${p.role} · ${p.city||'Unknown'}</span></h4>
               <small>${new Date(p.timestamp).toLocaleDateString()}</small>
             </div>
           </div>
@@ -603,13 +580,17 @@
           </div>
           <div id="map-${p.id}" class="tiny-map"></div>
           <div class="post-actions">
-            <span class="action-btn" onclick="likePost('${p.id}')"><i class="fas fa-heart"></i> ${p.likes}</span>
-            <span class="action-btn" onclick="commentPost('${p.id}')"><i class="fas fa-comment"></i> comment</span>
-            <button class="chat-btn" onclick="startChat('${p.posterId}', '${p.role}', '${p.posterName}', '${p.posterPhoto}')">Chat</button>
+            <span class="action-btn" onclick="toggleLike('${p.id}')"><i class="fas fa-heart"></i> <span id="likeCount-${p.id}">${p.likeCount}</span></span>
+            <span class="action-btn" onclick="showCommentInput('${p.id}')"><i class="fas fa-comment"></i> <span>${p.comments.length}</span></span>
+            <button class="chat-btn" onclick="startChat('${p.posterId}', '${p.posterName}', '${p.posterPhoto}')">Chat</button>
           </div>
+          <div id="comment-input-${p.id}" style="display:none;" class="comment-input">
+            <input type="text" id="comment-text-${p.id}" placeholder="Write a comment...">
+            <button class="comment-submit" onclick="submitComment('${p.id}')">Post</button>
+          </div>
+          ${commentsHtml}
         `;
         feed.appendChild(card);
-        // init map
         setTimeout(() => {
           if (p.location) {
             const m = L.map(`map-${p.id}`).setView([p.location.lat, p.location.lng], 13);
@@ -617,29 +598,58 @@
             L.marker([p.location.lat, p.location.lng]).addTo(m);
           }
         }, 150);
-      });
+      }
     }
 
-    // Placeholders for like/comment (can be implemented later)
-    window.likePost = (postId) => {
-      showToast('Like feature coming soon');
-    };
-    window.commentPost = (postId) => {
-      showToast('Comments coming soon');
+    // Like functionality
+    window.toggleLike = async (postId) => {
+      const postRef = db.ref('posts/'+postId);
+      const snap = await postRef.child('likes').once('value');
+      const likes = snap.val() || {};
+      if (likes[tenantUid]) {
+        // unlike
+        delete likes[tenantUid];
+        await postRef.update({ likes, likeCount: Object.keys(likes).length });
+      } else {
+        likes[tenantUid] = true;
+        await postRef.update({ likes, likeCount: Object.keys(likes).length });
+      }
+      // update UI
+      document.getElementById(`likeCount-${postId}`).innerText = Object.keys(likes).length;
     };
 
-    // ---------- CHAT ----------
-    window.startChat = (posterId, role, posterName, posterPhoto) => {
+    // Comment
+    window.showCommentInput = (postId) => {
+      document.getElementById(`comment-input-${postId}`).style.display = 'flex';
+    };
+
+    window.submitComment = async (postId) => {
+      const input = document.getElementById(`comment-text-${postId}`);
+      const text = input.value.trim();
+      if (!text) return;
+      const comment = {
+        uid: tenantUid,
+        name: currentTenant.name,
+        photo: currentTenant.photo,
+        text: text,
+        timestamp: Date.now()
+      };
+      const postRef = db.ref('posts/'+postId);
+      await postRef.child('comments').push(comment);
+      input.value = '';
+      document.getElementById(`comment-input-${postId}`).style.display = 'none';
+      // reload feed to show new comment
+      loadPosts();
+    };
+
+    // Chat
+    window.startChat = (posterId, posterName, posterPhoto) => {
       selectedPosterId = posterId;
-      selectedPosterRole = role;
-      // ensure conversation exists
-      const convId = tenantUid + '_' + posterId;
-      // switch to chats tab
+      // switch to chats section
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       document.querySelector('[data-sec="chats"]').classList.add('active');
       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
       document.getElementById('sectionChats').classList.add('active');
-      // open chat window for this poster
       openChatWindow(posterId, posterName, posterPhoto);
     };
 
@@ -704,7 +714,7 @@
       loadMessages(selectedPosterId);
     };
 
-    // ---------- SETTINGS + LOGOUT ----------
+    // Settings
     window.openCloudinaryForProfile = () => {
       const widget = cloudinary.createUploadWidget({
         cloudName: CLOUDINARY.cloudName, uploadPreset: CLOUDINARY.uploadPreset, cropping: true, croppingAspectRatio:1
@@ -726,16 +736,15 @@
       const city = document.getElementById('settingsCity').value;
       db.ref('users/'+tenantUid).update({ name, phone, city }).then(() => {
         currentTenant = {...currentTenant, name, phone, city};
-        renderTenantInfo();
         showToast('profile updated');
       });
     }
+    document.getElementById('settingsName').addEventListener('change', updateSettings);
+    document.getElementById('settingsPhone').addEventListener('change', updateSettings);
+    document.getElementById('settingsCity').addEventListener('change', updateSettings);
 
-    window.logout = () => {
-      auth.signOut().then(() => window.location.href = 'login.html');
-    };
+    window.logout = () => auth.signOut().then(() => window.location.href = 'login.html');
 
-    // ---------- NAVIGATION ----------
     document.querySelectorAll('.nav-item').forEach(item => {
       item.addEventListener('click', () => {
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -751,11 +760,6 @@
       t.style.display = 'block'; t.innerText = msg;
       setTimeout(() => t.style.display = 'none', 2000);
     }
-
-    // Bind settings update
-    document.getElementById('settingsName').addEventListener('change', updateSettings);
-    document.getElementById('settingsPhone').addEventListener('change', updateSettings);
-    document.getElementById('settingsCity').addEventListener('change', updateSettings);
   </script>
 </body>
 </html>
