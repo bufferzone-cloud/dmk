@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>NZUBO · tenant</title>
+  <!-- Font Awesome 6 (minimal) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Leaflet (lightweight map) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Cloudinary upload widget -->
+  <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+  <!-- Firebase SDK compat (v9) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <style>
+    /* ----- RESET & TINY VARIABLES (mobile ultra compact) ----- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+    :root {
+      --purple: #7c3aed;
+      --purple-light: #c4b5fd;
+      --purple-soft: #ede9fe;
+      --white: #ffffff;
+      --gray-bg: #faf9ff;
+      --shadow-tiny: 0 2px 8px rgba(124,58,237,0.08);
+      --radius: 20px;
+    }
+    body {
+      background: var(--white);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      color: #1a1a24;
+      font-size: 13px;
+    }
+    /* ----- header (very small) ----- */
+    .header {
+      padding: 8px 14px 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1.5px solid var(--purple-light);
+      background: var(--white);
+    }
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .logo-wrap h1 {
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: var(--purple);
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+    .home-icon {
+      background: var(--purple-soft);
+      width: 34px;
+      height: 34px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: var(--purple);
+      border: 1.5px solid var(--purple-light);
+      box-shadow: 0 2px 0 #ddd6fe;
+    }
+    .profile-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .profile-right img {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1.5px solid var(--purple);
+      object-fit: cover;
+    }
+    .profile-right span {
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: var(--purple);
+    }
+    /* ----- filter chips (horizontal scroll) ----- */
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      padding: 12px 14px 8px;
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .filter-bar::-webkit-scrollbar {
+      display: none;
+    }
+    .chip {
+      background: var(--white);
+      border: 1.5px solid var(--purple-light);
+      border-radius: 40px;
+      padding: 6px 16px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--purple);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .chip.active {
+      background: var(--purple);
+      color: white;
+      border-color: var(--purple);
+    }
+    .city-filter {
+      background: var(--white);
+      border: 1.5px solid var(--purple-light);
+      border-radius: 40px;
+      padding: 6px 16px;
+      font-size: 0.75rem;
+      width: 130px;
+      flex-shrink: 0;
+    }
+    /* ----- main scroll area ----- */
+    .main-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 12px 75px;
+      background: var(--gray-bg);
+    }
+    /* ----- bottom nav (tiny) ----- */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--white);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 4px 10px 16px;
+      border-top: 1.5px solid var(--purple-light);
+      border-radius: 24px 24px 0 0;
+      box-shadow: 0 -2px 10px rgba(124,58,237,0.1);
+      z-index: 100;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #a78bfa;
+      font-size: 0.65rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .nav-item i {
+      font-size: 1.4rem;
+    }
+    .nav-item.active {
+      color: var(--purple);
+    }
+    /* ----- sections ----- */
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+    }
+    /* ----- feed cards (ultra compact) ----- */
+    .feed-card {
+      background: white;
+      border-radius: var(--radius);
+      border: 1.5px solid var(--purple-light);
+      padding: 12px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-tiny);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .card-header img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid var(--purple);
+    }
+    .card-header h4 {
+      font-size: 0.8rem;
+    }
+    .card-header small {
+      font-size: 0.6rem;
+      color: gray;
+    }
+    .role-city {
+      font-size: 0.65rem;
+      background: var(--purple-soft);
+      padding: 2px 8px;
+      border-radius: 30px;
+      display: inline-block;
+      margin-left: 6px;
+    }
+    .desc-text {
+      font-size: 0.8rem;
+      margin: 4px 0 2px;
+    }
+    .price-badge {
+      background: var(--purple-soft);
+      padding: 3px 10px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      display: inline-block;
+    }
+    .grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      margin: 6px 0;
+    }
+    .grid-2x2 img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      border-radius: 14px;
+      border: 1.5px solid var(--purple-light);
+      object-fit: cover;
+    }
+    .tiny-map {
+      height: 100px;
+      border-radius: 16px;
+      border: 1.5px solid var(--purple);
+      margin: 6px 0;
+    }
+    .post-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--purple);
+      font-weight: 600;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .action-btn i {
+      font-size: 1.2rem;
+    }
+    .chat-btn {
+      background: var(--purple);
+      color: white;
+      border: none;
+      border-radius: 40px;
+      padding: 6px 16px;
+      font-weight: 700;
+      font-size: 0.7rem;
+      margin-left: auto;
+      cursor: pointer;
+    }
+    /* ----- chat list ----- */
+    .chat-item {
+      background: white;
+      border-radius: 40px;
+      border: 1.5px solid var(--purple-light);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+    .chat-item img {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid var(--purple);
+    }
+    .chat-item h4 {
+      font-size: 0.85rem;
+    }
+    .chat-item p {
+      font-size: 0.7rem;
+      color: #4b5563;
+    }
+    .chat-window {
+      background: white;
+      border-radius: 24px;
+      border: 1.5px solid var(--purple-light);
+      padding: 12px;
+      margin-top: 12px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .message-bubble {
+      display: flex;
+      margin-bottom: 8px;
+    }
+    .message-bubble.tenant {
+      justify-content: flex-end;
+    }
+    .message-bubble.other {
+      justify-content: flex-start;
+    }
+    .bubble {
+      max-width: 70%;
+      padding: 8px 14px;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      background: var(--purple-soft);
+      border: 1.5px solid var(--purple-light);
+    }
+    .message-bubble.tenant .bubble {
+      background: var(--purple);
+      color: white;
+      border-color: #4c1d95;
+    }
+    .chat-input-area {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .chat-input-area input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1.5px solid var(--purple-light);
+      border-radius: 40px;
+      font-size: 0.8rem;
+    }
+    .chat-input-area button {
+      background: var(--purple);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      font-size: 1.2rem;
+    }
+    /* ----- settings ----- */
+    .settings-card {
+      background: white;
+      border-radius: 28px;
+      padding: 18px;
+      border: 1.5px solid var(--purple-light);
+    }
+    .settings-field {
+      margin-bottom: 14px;
+    }
+    .settings-field label {
+      font-weight: 600;
+      color: var(--purple);
+      font-size: 0.75rem;
+    }
+    .settings-field input {
+      width: 100%;
+      padding: 12px;
+      border: 1.5px solid var(--purple-light);
+      border-radius: 40px;
+      margin-top: 3px;
+      font-size: 0.8rem;
+    }
+    .logout-btn {
+      background: white;
+      border: 2px solid #ef4444;
+      color: #ef4444;
+      border-radius: 40px;
+      padding: 12px;
+      width: 100%;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    .toast-msg {
+      position: fixed;
+      bottom: 90px; left: 20px; right: 20px;
+      background: var(--purple);
+      color: white;
+      text-align: center;
+      padding: 10px;
+      border-radius: 60px;
+      font-size: 0.8rem;
+      z-index: 200;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo-wrap">
+      <h1>NZUBO</h1>
+      <div class="home-icon"><i class="fas fa-house"></i></div>
+    </div>
+    <div class="profile-right" id="profileRight">
+      <img src="" id="tenantThumb" alt="">
+      <span id="tenantName"></span>
+    </div>
+  </div>
+
+  <!-- filter chips -->
+  <div class="filter-bar">
+    <div class="chip active" data-filter="all">All</div>
+    <div class="chip" data-filter="landlord">Landlords</div>
+    <div class="chip" data-filter="agent">Agents</div>
+    <input type="text" class="city-filter" id="cityFilter" placeholder="Filter by city" list="zambiaCities">
+    <datalist id="zambiaCities">
+      <option>Lusaka</option><option>Kitwe</option><option>Ndola</option><option>Livingstone</option><option>Kabwe</option>
+    </datalist>
+  </div>
+
+  <div class="main-scroll" id="mainScroll">
+    <!-- HOME SECTION (feed) -->
+    <div class="section active" id="sectionHome">
+      <div id="feedContainer"></div>
+    </div>
+
+    <!-- CHATS SECTION -->
+    <div class="section" id="sectionChats">
+      <div id="chatList" class="chat-list"></div>
+      <div id="chatWindow" class="chat-window" style="display: none;">
+        <div id="messagesContainer"></div>
+        <div class="chat-input-area">
+          <input type="text" id="chatInput" placeholder="message...">
+          <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS SECTION -->
+    <div class="section" id="sectionSettings">
+      <div class="settings-card">
+        <div class="settings-field">
+          <label>photo</label>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <img src="" id="settingsPhoto" style="width:52px;height:52px;border-radius:50%;border:1.5px solid var(--purple);">
+            <button class="upload-btn" onclick="openCloudinaryForProfile()" style="background:white; border:1.5px solid var(--purple); border-radius:40px; padding:6px 12px;">change</button>
+          </div>
+        </div>
+        <div class="settings-field"><label>name</label><input type="text" id="settingsName"></div>
+        <div class="settings-field"><label>phone</label><input type="tel" id="settingsPhone"></div>
+        <div class="settings-field"><label>city</label><input type="text" id="settingsCity" list="zambiaCities"></div>
+        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOG OUT</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- bottom nav -->
+  <div class="bottom-nav">
+    <div class="nav-item active" data-sec="home"><i class="fas fa-home"></i><span>Home</span></div>
+    <div class="nav-item" data-sec="chats"><i class="fas fa-comment"></i><span>Chats</span></div>
+    <div class="nav-item" data-sec="settings"><i class="fas fa-user"></i><span>Settings</span></div>
+  </div>
+
+  <div id="toast" class="toast-msg"></div>
+
+  <script>
+    // Firebase config (dmkl)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCzf9dZFB0l7ZEPLJ4tpo4bSjgQNW3VTus",
+      authDomain: "dmkl-8ea2c.firebaseapp.com",
+      databaseURL: "https://dmkl-8ea2c-default-rtdb.firebaseio.com",
+      projectId: "dmkl-8ea2c",
+      storageBucket: "dmkl-8ea2c.firebasestorage.app",
+      messagingSenderId: "155892504799",
+      appId: "1:155892504799:web:45ed0037fd0fe79b85b16a"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    // Cloudinary
+    const CLOUDINARY = { cloudName: 'dd3lcymrk', uploadPreset: 'h3eyhc2o', folder: 'zynapse/profiles' };
+
+    // Global state
+    let currentTenant = null;
+    let tenantUid = null;
+    let selectedPosterId = null; // for chat
+    let selectedPosterRole = null;
+    let allPosts = []; // store for filtering
+
+    // Auth + role check
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) { window.location.href = 'login.html'; return; }
+      const snap = await db.ref('users/' + user.uid).once('value');
+      if (!snap.exists() || snap.val().role !== 'tenant') {
+        alert('Access denied. Tenant only.');
+        auth.signOut(); window.location.href = 'index.html'; return;
+      }
+      tenantUid = user.uid;
+      currentTenant = { uid: user.uid, ...snap.val() };
+      renderTenantInfo();
+      loadPosts();
+      loadChatList();
+    });
+
+    function renderTenantInfo() {
+      document.getElementById('tenantThumb').src = currentTenant.photo || 'https://via.placeholder.com/34?text=👤';
+      document.getElementById('tenantName').innerText = currentTenant.name || 'Tenant';
+      document.getElementById('settingsPhoto').src = currentTenant.photo || 'https://via.placeholder.com/52?text=👤';
+      document.getElementById('settingsName').value = currentTenant.name || '';
+      document.getElementById('settingsPhone').value = currentTenant.phone || '';
+      document.getElementById('settingsCity').value = currentTenant.city || '';
+    }
+
+    // ---------- FILTERING ----------
+    let currentRoleFilter = 'all';
+    let currentCityFilter = '';
+
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        currentRoleFilter = chip.dataset.filter;
+        filterPosts();
+      });
+    });
+
+    document.getElementById('cityFilter').addEventListener('input', (e) => {
+      currentCityFilter = e.target.value.toLowerCase();
+      filterPosts();
+    });
+
+    function filterPosts() {
+      const filtered = allPosts.filter(post => {
+        // role filter
+        if (currentRoleFilter !== 'all' && post.role !== currentRoleFilter) return false;
+        // city filter
+        if (currentCityFilter && !post.city?.toLowerCase().includes(currentCityFilter)) return false;
+        return true;
+      });
+      renderFeed(filtered);
+    }
+
+    // ---------- LOAD POSTS (from landlords and agents) ----------
+    async function loadPosts() {
+      const postsSnap = await db.ref('posts').once('value');
+      const posts = [];
+      postsSnap.forEach(child => {
+        const p = child.val();
+        // Determine role and poster id (handle both old and new structure)
+        let role = p.role || (p.landlordUid ? 'landlord' : (p.agentUid ? 'agent' : null));
+        let posterId = p.posterId || p.landlordUid || p.agentUid;
+        let posterName = p.posterName || p.landlordName || p.agentName || 'Property owner';
+        let posterPhoto = p.posterPhoto || p.landlordPhoto || p.agentPhoto || '';
+        let city = p.city || ''; // if post includes city (from landlord/agent)
+        if (!role || !posterId) return; // skip invalid
+        posts.push({
+          id: child.key,
+          posterId,
+          role,
+          posterName,
+          posterPhoto,
+          description: p.description,
+          price: p.price,
+          photos: p.photos || [],
+          video: p.video,
+          location: p.location,
+          timestamp: p.timestamp,
+          likes: p.likes || 0,
+          city: city
+        });
+      });
+      // sort by newest
+      posts.sort((a,b) => b.timestamp - a.timestamp);
+      allPosts = posts;
+      filterPosts();
+    }
+
+    function renderFeed(posts) {
+      const feed = document.getElementById('feedContainer');
+      feed.innerHTML = '';
+      posts.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'feed-card';
+        card.innerHTML = `
+          <div class="card-header">
+            <img src="${p.posterPhoto || 'https://via.placeholder.com/32'}" onerror="this.src='https://via.placeholder.com/32'">
+            <div>
+              <h4>${p.posterName} <span class="role-city">${p.role} · ${p.city || 'Unknown city'}</span></h4>
+              <small>${new Date(p.timestamp).toLocaleDateString()}</small>
+            </div>
+          </div>
+          <div class="desc-text">${p.description}</div>
+          <span class="price-badge"><i class="fas fa-coins"></i> ${p.price}</span>
+          <div class="grid-2x2">
+            ${p.photos.slice(0,4).map(url => `<img src="${url}">`).join('')}
+            ${p.video ? '<i class="fas fa-play" style="color:var(--purple);"></i>' : ''}
+          </div>
+          <div id="map-${p.id}" class="tiny-map"></div>
+          <div class="post-actions">
+            <span class="action-btn" onclick="likePost('${p.id}')"><i class="fas fa-heart"></i> ${p.likes}</span>
+            <span class="action-btn" onclick="commentPost('${p.id}')"><i class="fas fa-comment"></i> comment</span>
+            <button class="chat-btn" onclick="startChat('${p.posterId}', '${p.role}', '${p.posterName}', '${p.posterPhoto}')">Chat</button>
+          </div>
+        `;
+        feed.appendChild(card);
+        // init map
+        setTimeout(() => {
+          if (p.location) {
+            const m = L.map(`map-${p.id}`).setView([p.location.lat, p.location.lng], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
+            L.marker([p.location.lat, p.location.lng]).addTo(m);
+          }
+        }, 150);
+      });
+    }
+
+    // Placeholders for like/comment (can be implemented later)
+    window.likePost = (postId) => {
+      showToast('Like feature coming soon');
+    };
+    window.commentPost = (postId) => {
+      showToast('Comments coming soon');
+    };
+
+    // ---------- CHAT ----------
+    window.startChat = (posterId, role, posterName, posterPhoto) => {
+      selectedPosterId = posterId;
+      selectedPosterRole = role;
+      // ensure conversation exists
+      const convId = tenantUid + '_' + posterId;
+      // switch to chats tab
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.querySelector('[data-sec="chats"]').classList.add('active');
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById('sectionChats').classList.add('active');
+      // open chat window for this poster
+      openChatWindow(posterId, posterName, posterPhoto);
+    };
+
+    async function loadChatList() {
+      const chatsDiv = document.getElementById('chatList');
+      chatsDiv.innerHTML = '';
+      const convSnap = await db.ref('conversations').orderByKey().once('value');
+      convSnap.forEach(conv => {
+        const convId = conv.key;
+        if (convId.includes(tenantUid)) {
+          const parts = convId.split('_');
+          const otherId = parts[0] === tenantUid ? parts[1] : parts[0];
+          db.ref('users/'+otherId).once('value').then(snap => {
+            if (snap.exists()) {
+              const u = snap.val();
+              const item = document.createElement('div');
+              item.className = 'chat-item';
+              item.setAttribute('data-other', otherId);
+              item.innerHTML = `<img src="${u.photo||'https://via.placeholder.com/38'}"><div><h4>${u.name||'User'}</h4><p>${u.role||''}</p></div>`;
+              item.addEventListener('click', () => openChatWindow(otherId, u.name, u.photo));
+              chatsDiv.appendChild(item);
+            }
+          });
+        }
+      });
+    }
+
+    function openChatWindow(otherId, otherName, otherPhoto) {
+      selectedPosterId = otherId;
+      document.getElementById('chatWindow').style.display = 'block';
+      loadMessages(otherId);
+    }
+
+    async function loadMessages(otherId) {
+      const convId = tenantUid + '_' + otherId;
+      const msgSnap = await db.ref('conversations/'+convId+'/messages').orderByChild('timestamp').once('value');
+      const msgs = [];
+      msgSnap.forEach(m => msgs.push(m.val()));
+      const container = document.getElementById('messagesContainer');
+      container.innerHTML = '';
+      msgs.forEach(m => {
+        const div = document.createElement('div');
+        div.className = `message-bubble ${m.sender === tenantUid ? 'tenant' : 'other'}`;
+        div.innerHTML = `<div class="bubble">${m.text}</div>`;
+        container.appendChild(div);
+      });
+      container.scrollTop = container.scrollHeight;
+    }
+
+    window.sendMessage = async () => {
+      if (!selectedPosterId) return;
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      const convId = tenantUid + '_' + selectedPosterId;
+      await db.ref('conversations/'+convId+'/messages').push({
+        sender: tenantUid,
+        text: text,
+        timestamp: Date.now()
+      });
+      input.value = '';
+      loadMessages(selectedPosterId);
+    };
+
+    // ---------- SETTINGS + LOGOUT ----------
+    window.openCloudinaryForProfile = () => {
+      const widget = cloudinary.createUploadWidget({
+        cloudName: CLOUDINARY.cloudName, uploadPreset: CLOUDINARY.uploadPreset, cropping: true, croppingAspectRatio:1
+      }, (error, result) => {
+        if (!error && result && result.event === 'success') {
+          const url = result.info.secure_url;
+          db.ref('users/'+tenantUid).update({ photo: url });
+          currentTenant.photo = url;
+          renderTenantInfo();
+          showToast('photo updated');
+        }
+      });
+      widget.open();
+    };
+
+    function updateSettings() {
+      const name = document.getElementById('settingsName').value;
+      const phone = document.getElementById('settingsPhone').value;
+      const city = document.getElementById('settingsCity').value;
+      db.ref('users/'+tenantUid).update({ name, phone, city }).then(() => {
+        currentTenant = {...currentTenant, name, phone, city};
+        renderTenantInfo();
+        showToast('profile updated');
+      });
+    }
+
+    window.logout = () => {
+      auth.signOut().then(() => window.location.href = 'login.html');
+    };
+
+    // ---------- NAVIGATION ----------
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        item.classList.add('active');
+        const sec = item.dataset.sec;
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById('section' + sec.charAt(0).toUpperCase() + sec.slice(1)).classList.add('active');
+      });
+    });
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.style.display = 'block'; t.innerText = msg;
+      setTimeout(() => t.style.display = 'none', 2000);
+    }
+
+    // Bind settings update
+    document.getElementById('settingsName').addEventListener('change', updateSettings);
+    document.getElementById('settingsPhone').addEventListener('change', updateSettings);
+    document.getElementById('settingsCity').addEventListener('change', updateSettings);
+  </script>
+</body>
+</html>
