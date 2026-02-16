@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NZUBO · iOS purple white</title>
+  <title>NZUBO · ios purple</title>
   <!-- Font Awesome (icons) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Cloudinary upload widget -->
@@ -17,153 +17,186 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --white: #ffffff;
+      --white-soft: #fafaff;
+      --purple: #7c3aed;      /* vibrant purple */
+      --purple-light: #c4b5fd;
+      --purple-soft: #ede9fe;
+      --gray-100: #f3f4f6;
+      --gray-400: #9ca3af;
+      --gray-700: #374151;
+      --shadow-float: 0 20px 35px -10px rgba(124, 58, 237, 0.15), 0 5px 15px rgba(0,0,0,0.03);
+      --radius-card: 28px;
+      --radius-input: 18px;
     }
 
     body {
+      font-family: -apple-system, 'Helvetica Neue', 'SF Pro Text', sans-serif;
+      background: var(--white);
       min-height: 100vh;
-      background: #ffffff; /* pure white background */
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 1rem;
+      padding: 16px;
+      color: #1e1e2f;
     }
 
-    /* floating card – white, purple border, soft shadows */
-    .ios-card {
-      background: #ffffff;
+    /* main floating card */
+    .phone-frame {
       width: 100%;
-      max-width: 520px;
-      border-radius: 32px;
-      border: 2px solid #b47aff; /* thin purple border */
-      box-shadow: 0 25px 50px -10px rgba(128, 0, 255, 0.2), 0 0 0 1px rgba(180, 122, 255, 0.3);
-      padding: 2.2rem 2rem;
+      max-width: 420px;  /* comfortable mobile width */
+      margin: 0 auto;
+    }
+
+    .ios-card {
+      background: var(--white);
       backdrop-filter: blur(2px);
+      border-radius: var(--radius-card);
+      padding: 28px 22px;
+      box-shadow: var(--shadow-float);
+      border: 2px solid var(--purple-light);   /* thin purple border */
       transition: all 0.2s ease;
     }
 
-    /* header with big purple NZUBO + home icon */
-    .brand-header {
+    /* header with big NZUBO + home */
+    .nzubo-header {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 0.6rem;
-      margin-bottom: 2rem;
+      justify-content: space-between;
+      margin-bottom: 32px;
     }
-    .brand-header h1 {
-      font-size: 4rem;
+    .nzubo-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nzubo-title h1 {
+      font-size: 3.2rem;      /* big */
       font-weight: 800;
-      letter-spacing: -1px;
-      color: #8a4fff; /* vibrant purple */
-      text-shadow: 0 3px 12px rgba(138, 79, 255, 0.25);
+      letter-spacing: -1.5px;
+      color: var(--purple);
+      text-shadow: 2px 2px 0 var(--purple-soft);
       line-height: 1;
     }
-    .brand-header i {
-      font-size: 3rem;
-      color: #8a4fff;
-      filter: drop-shadow(0 3px 8px rgba(138, 79, 255, 0.3));
+    .home-icon {
+      background: var(--purple-soft);
+      color: var(--purple);
+      width: 48px;
+      height: 48px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      border: 2px solid var(--purple-light);
+      box-shadow: 0 5px 0 var(--purple-soft);
     }
 
-    /* login form */
-    .login-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1.2rem;
-      margin-bottom: 2.2rem;
+    /* login fields */
+    .login-fields {
+      margin-bottom: 28px;
     }
-    .input-field {
+    .input-group {
       position: relative;
-      width: 100%;
+      margin-bottom: 20px;
     }
-    .input-field i {
+    .input-group i {
       position: absolute;
-      left: 16px;
+      left: 18px;
       top: 50%;
       transform: translateY(-50%);
-      color: #a07aff;
-      font-size: 1.2rem;
+      color: var(--purple);
+      font-size: 1.3rem;
+      opacity: 0.8;
     }
-    .input-field input {
+    .input-group input {
       width: 100%;
-      padding: 1rem 1rem 1rem 3rem;
-      border: 1.8px solid #e6d9ff;
-      border-radius: 24px;
-      font-size: 1rem;
-      background: white;
-      box-shadow: 0 8px 18px -6px rgba(128, 0, 255, 0.1);
-      transition: all 0.2s;
+      padding: 18px 18px 18px 52px;
+      font-size: 1.05rem;
+      border: 2px solid #e9e0ff;
+      border-radius: var(--radius-input);
+      background: var(--white);
+      transition: all 0.15s;
+      font-weight: 500;
     }
-    .input-field input:focus {
+    .input-group input:focus {
       outline: none;
-      border-color: #b47aff;
-      box-shadow: 0 8px 22px -4px #b47aff55;
+      border-color: var(--purple);
+      box-shadow: 0 0 0 5px rgba(124,58,237,0.15);
     }
     .btn-login {
-      background: #8a4fff;
-      border: none;
-      border-radius: 30px;
-      padding: 1rem;
+      background: var(--purple);
       color: white;
+      border: none;
+      padding: 18px;
+      width: 100%;
+      border-radius: 40px;
+      font-size: 1.3rem;
       font-weight: 700;
-      font-size: 1.2rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.6rem;
+      gap: 12px;
+      box-shadow: 0 8px 0 #4c1d95;
+      transition: 0.1s linear;
+      margin-top: 8px;
+      border: 2px solid white;
       cursor: pointer;
-      box-shadow: 0 15px 25px -8px #b47aff;
-      transition: all 0.15s;
-      border: 1px solid #b47aff;
     }
-    .btn-login:hover {
-      background: #753fe8;
-      transform: scale(1.01);
+    .btn-login:active {
+      transform: translateY(5px);
+      box-shadow: 0 3px 0 #4c1d95;
     }
 
-    /* floating register icons */
-    .register-floating-row {
+    /* register icons row */
+    .register-row {
       display: flex;
-      align-items: center;
       justify-content: space-around;
-      margin: 2rem 0 0.5rem;
+      margin: 32px 0 12px;
     }
     .reg-icon {
-      background: white;
-      border: 2px solid #b47aff;
-      border-radius: 50%;
-      width: 80px;
-      height: 80px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      box-shadow: 0 16px 30px -12px rgba(128, 0, 255, 0.4);
-      transition: 0.15s;
+      gap: 8px;
+      background: var(--white);
+      border: 2px solid var(--purple-light);
+      border-radius: 50px;
+      padding: 16px 0;
+      width: 85px;
+      box-shadow: 0 8px 0 #f0e9ff;
+      transition: 0.1s;
       cursor: pointer;
-      color: #5f2eb0;
-      font-size: 0.9rem;
-      font-weight: 600;
-      gap: 0.2rem;
+      color: var(--purple);
     }
     .reg-icon i {
       font-size: 2.2rem;
-      color: #8a4fff;
     }
-    .reg-icon:hover {
-      transform: translateY(-5px);
-      background: #f7f2ff;
-      border-color: #9a5eff;
+    .reg-icon span {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #2d2d4a;
+    }
+    .reg-icon:active {
+      transform: translateY(5px);
+      box-shadow: 0 3px 0 #e0d0ff;
     }
 
-    /* modal overlay (hidden by default) */
+    /* MODAL overlay & cards */
     .modal-overlay {
       position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.2);
-      backdrop-filter: blur(4px);
+      inset: 0;
+      background: rgba(124, 58, 237, 0.2);
+      backdrop-filter: blur(3px);
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 16px;
       z-index: 1000;
       visibility: hidden;
       opacity: 0;
@@ -175,566 +208,529 @@
     }
     .modal-card {
       background: white;
-      max-width: 480px;
-      width: 90%;
-      border-radius: 36px;
-      border: 2px solid #b47aff;
-      padding: 2rem 1.8rem;
-      box-shadow: 0 40px 70px -10px #9a5eff;
-      max-height: 85vh;
+      width: 100%;
+      max-width: 460px;
+      max-height: 90vh;
       overflow-y: auto;
+      border-radius: 40px;
+      padding: 26px 20px;
+      border: 3px solid var(--purple);
+      box-shadow: var(--shadow-float);
+      position: relative;
     }
-    .modal-card h3 {
+    .modal-card h2 {
+      color: var(--purple);
       font-size: 2rem;
-      color: #5f2eb0;
-      margin-bottom: 1.5rem;
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    /* form inside modal */
-    .reg-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1.2rem;
-    }
-    .reg-form input, .reg-form select {
-      padding: 0.9rem 1rem;
-      border: 1.8px solid #e6d9ff;
-      border-radius: 30px;
-      font-size: 1rem;
-      background: white;
-    }
-    .reg-form input:focus {
-      border-color: #b47aff;
-      outline: none;
-    }
-    /* profile upload area (reused from sample) */
-    .profile-upload-section {
-      margin: 0.5rem 0;
-    }
-    .upload-label {
-      font-weight: 600;
-      color: #5f2eb0;
-      margin-bottom: 0.5rem;
-      display: block;
-    }
-    .profile-upload-container {
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
-      gap: 1.2rem;
-      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 2px dashed var(--purple-light);
+      padding-bottom: 8px;
     }
-    .upload-preview {
-      width: 85px;
-      height: 85px;
+    .close-modal {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      font-size: 2rem;
+      color: var(--purple);
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* form elements inside modal */
+    .upload-preview-sm {
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
-      background: #f3edff;
+      background: #f0e9ff;
+      border: 2px dashed var(--purple);
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      border: 2px dashed #b47aff;
     }
     .preview-placeholder {
       display: flex;
       flex-direction: column;
       align-items: center;
-      color: #b29aff;
-      font-size: 0.8rem;
+      color: var(--purple);
     }
-    .preview-placeholder i {
-      font-size: 2.2rem;
-    }
-    .upload-preview img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .upload-buttons {
+    .profile-upload-row {
       display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      margin: 15px 0;
+    }
+    .upload-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
     .btn-upload, .btn-remove {
+      border: 2px solid var(--purple);
       background: white;
-      border: 1.8px solid #b47aff;
+      color: var(--purple);
       border-radius: 40px;
-      padding: 0.6rem 1.2rem;
+      padding: 10px 16px;
       font-weight: 600;
-      color: #6f3bdb;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       cursor: pointer;
-      transition: 0.1s;
     }
     .btn-remove {
-      border-color: #ff6b8b;
-      color: #d94a6a;
+      border-color: #f87171;
+      color: #b91c1c;
     }
-    .hidden {
-      display: none !important;
+    .modal-field {
+      margin-bottom: 18px;
     }
-    .city-select {
-      background: white;
+    .modal-field label {
+      font-weight: 700;
+      color: #2e1065;
+      display: block;
+      margin-bottom: 5px;
     }
-    .btn-submit {
-      background: #8a4fff;
-      border: none;
-      border-radius: 40px;
-      padding: 1rem;
+    .modal-field input, .modal-field select {
+      width: 100%;
+      padding: 16px 18px;
+      border: 2px solid #ddd6fe;
+      border-radius: 30px;
+      font-size: 1rem;
+    }
+    .city-datalist {
+      width: 100%;
+      padding: 16px 18px;
+      border: 2px solid #ddd6fe;
+      border-radius: 30px;
+    }
+    .btn-create {
+      background: var(--purple);
       color: white;
+      border: none;
+      padding: 18px;
+      width: 100%;
+      border-radius: 40px;
       font-weight: 700;
       font-size: 1.2rem;
-      margin-top: 0.8rem;
+      margin-top: 20px;
+      box-shadow: 0 5px 0 #4c1d95;
       cursor: pointer;
     }
+
+    /* toast */
     .toast-container {
       position: fixed;
-      top: 20px; right: 20px;
-      z-index: 9999;
+      bottom: 30px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      z-index: 1200;
+      pointer-events: none;
     }
     .toast {
-      background: #1f1f2e;
+      background: var(--purple);
       color: white;
-      padding: 1rem 1.8rem;
+      padding: 14px 28px;
       border-radius: 60px;
-      margin-bottom: 0.5rem;
-      box-shadow: 0 15px 30px #b47aff40;
-      border-left: 6px solid #b47aff;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(124,58,237,0.4);
+      border: 2px solid white;
+    }
+
+    /* city datalist */
+    datalist {
+      display: none;
+    }
+    .hidden {
+      display: none;
+    }
+    small.generated-email {
+      color: var(--purple);
       font-weight: 500;
+      background: #f0e9ff;
+      padding: 10px 18px;
+      border-radius: 30px;
+      display: inline-block;
+      margin: 5px 0;
     }
   </style>
 </head>
 <body>
+<div class="phone-frame">
   <div class="ios-card">
-    <!-- big purple NZUBO + home icon -->
-    <div class="brand-header">
-      <i class="fas fa-home"></i>
-      <h1>NZUBO</h1>
+    <!-- big NZUBO + home icon -->
+    <div class="nzubo-header">
+      <div class="nzubo-title">
+        <h1>NZUBO</h1>
+        <div class="home-icon"><i class="fas fa-home"></i></div>
+      </div>
     </div>
 
-    <!-- login form (email + password) -->
-    <div class="login-form">
-      <div class="input-field">
+    <!-- login fields -->
+    <div class="login-fields">
+      <div class="input-group">
         <i class="fas fa-envelope"></i>
-        <input type="email" id="loginEmail" placeholder="Email" value="">
+        <input type="email" id="loginEmail" placeholder="email" value="">
       </div>
-      <div class="input-field">
+      <div class="input-group">
         <i class="fas fa-lock"></i>
-        <input type="password" id="loginPassword" placeholder="Password">
+        <input type="password" id="loginPassword" placeholder="password">
+        <i class="fas fa-eye" style="left: auto; right: 18px; cursor: pointer;" onclick="togglePassword()"></i>
       </div>
-      <button class="btn-login" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Sign in</button>
+      <button class="btn-login" onclick="loginUser()"><i class="fas fa-arrow-right-to-bracket"></i> SIGN IN</button>
     </div>
 
     <!-- three floating icons for register -->
-    <div class="register-floating-row">
-      <div class="reg-icon" id="showLandlordReg">
-        <i class="fas fa-user-tie"></i>
-        <span>landlord</span>
+    <div class="register-row">
+      <div class="reg-icon" onclick="openModal('landlordModal')">
+        <i class="fas fa-building-user"></i>
+        <span>LANDLORD</span>
       </div>
-      <div class="reg-icon" id="showTenantReg">
+      <div class="reg-icon" onclick="openModal('tenantModal')">
         <i class="fas fa-user"></i>
-        <span>tenant</span>
+        <span>TENANT</span>
       </div>
-      <div class="reg-icon" id="showAgentReg">
-        <i class="fas fa-user-headset"></i>
-        <span>agent</span>
+      <div class="reg-icon" onclick="openModal('agentModal')">
+        <i class="fas fa-id-badge"></i>
+        <span>AGENT</span>
       </div>
     </div>
-    <p style="text-align: center; color: #a07aff; font-size: 0.9rem; margin-top: 0.5rem;">register as</p>
+    <p style="text-align: center; color: var(--purple); font-weight: 500; margin-top: 10px;">⬇️ tap to register ⬇️</p>
   </div>
+</div>
 
-  <!-- MODALS for each registration type -->
+<!-- MODALS (landlord, tenant, agent) -->
 
-  <!-- LANDLORD registration modal -->
-  <div class="modal-overlay" id="landlordModal">
-    <div class="modal-card">
-      <h3><i class="fas fa-user-tie"></i> Landlord signup</h3>
-      <div class="reg-form" id="landlordForm">
-        <!-- profile pic -->
-        <div class="profile-upload-section" id="landlordUploadSection">
-          <label class="upload-label">Profile picture</label>
-          <div class="profile-upload-container">
-            <div class="upload-preview" id="landlordPreview">
-              <div class="preview-placeholder" id="landlordPlaceholder">
-                <i class="fas fa-user-circle"></i><span>add</span>
-              </div>
-              <img id="landlordImg" class="hidden" style="width:100%; height:100%">
-            </div>
-            <div class="upload-buttons">
-              <button class="btn-upload" type="button" onclick="openCloudinaryUploader('landlord')"><i class="fas fa-cloud-upload-alt"></i> Upload</button>
-              <button class="btn-remove" type="button" onclick="removeProfileImage('landlord')"><i class="fas fa-trash"></i> Remove</button>
-            </div>
-          </div>
+<!-- LANDLORD MODAL -->
+<div id="landlordModal" class="modal-overlay">
+  <div class="modal-card">
+    <button class="close-modal" onclick="closeModal('landlordModal')"><i class="fas fa-times-circle"></i></button>
+    <h2><i class="fas fa-building-user"></i> Landlord</h2>
+    <!-- profile upload area (unique ID) -->
+    <div class="profile-upload-row" id="landlordUpload">
+      <div class="upload-preview-sm" id="landlordPreview">
+        <div class="preview-placeholder" id="landlordPlaceholder">
+          <i class="fas fa-camera" style="font-size: 2rem;"></i>
+          <span style="font-size:0.7rem;">add photo</span>
         </div>
-        <input type="text" id="landlordName" placeholder="Full name" required>
-        <input type="tel" id="landlordPhone" placeholder="Phone number" required>
-        <!-- city dropdown (Zambia) with search -->
-        <select id="landlordCity" class="city-select" required>
-          <option value="" disabled selected>🏙️ City in Zambia</option>
-        </select>
-        <!-- no email field – generated later -->
-        <button type="button" class="btn-submit" onclick="registerLandlord()">Create landlord account</button>
+        <img id="landlordImg" class="hidden" style="width:100%; height:100%; object-fit:cover;">
+      </div>
+      <div class="upload-btns">
+        <button class="btn-upload" onclick="openCloudinaryFor('landlord')"><i class="fas fa-cloud-upload-alt"></i> upload</button>
+        <button class="btn-remove" onclick="removeImage('landlord')"><i class="fas fa-trash"></i> remove</button>
       </div>
     </div>
+    <!-- fields -->
+    <div class="modal-field">
+      <label>Full name</label>
+      <input type="text" id="landlordName" placeholder="e.g. John Mulenga" oninput="updateLandlordEmail()">
+    </div>
+    <div class="modal-field">
+      <label>📧 email (auto-generated)</label>
+      <small class="generated-email" id="landlordEmailDisplay">landlord@name.com</small>
+    </div>
+    <div class="modal-field">
+      <label>📞 phone</label>
+      <input type="tel" id="landlordPhone" placeholder="+260 97...">
+    </div>
+    <div class="modal-field">
+      <label>🏙️ city (search & select)</label>
+      <input list="zambia-cities" id="landlordCity" placeholder="Type to search...">
+      <datalist id="zambia-cities">
+        <option>Lusaka</option><option>Kitwe</option><option>Ndola</option><option>Kabwe</option><option>Chingola</option><option>Mufulira</option><option>Livingstone</option><option>Chipata</option><option>Kasama</option><option>Solwezi</option><option>Mansa</option><option>Chililabombwe</option><option>Mazabuka</option><option>Monze</option><option>Mongu</option><option>Mbala</option><option>Kafue</option><option>Luanshya</option><option>Kalulushi</option>
+      </datalist>
+    </div>
+    <div class="modal-field">
+      <label>🔑 password (min 6 chars)</label>
+      <input type="password" id="landlordPassword" placeholder="••••••">
+    </div>
+    <div class="modal-field">
+      <label>✓ confirm password</label>
+      <input type="password" id="landlordConfirm" placeholder="••••••">
+    </div>
+    <button class="btn-create" onclick="registerLandlord()">CREATE ACCOUNT</button>
   </div>
+</div>
 
-  <!-- TENANT registration modal -->
-  <div class="modal-overlay" id="tenantModal">
-    <div class="modal-card">
-      <h3><i class="fas fa-user"></i> Tenant signup</h3>
-      <div class="reg-form" id="tenantForm">
-        <div class="profile-upload-section" id="tenantUploadSection">
-          <label class="upload-label">Profile picture</label>
-          <div class="profile-upload-container">
-            <div class="upload-preview" id="tenantPreview">
-              <div class="preview-placeholder" id="tenantPlaceholder"><i class="fas fa-user-circle"></i><span>add</span></div>
-              <img id="tenantImg" class="hidden">
-            </div>
-            <div class="upload-buttons">
-              <button class="btn-upload" type="button" onclick="openCloudinaryUploader('tenant')"><i class="fas fa-cloud-upload-alt"></i> Upload</button>
-              <button class="btn-remove" type="button" onclick="removeProfileImage('tenant')"><i class="fas fa-trash"></i> Remove</button>
-            </div>
-          </div>
-        </div>
-        <input type="text" id="tenantName" placeholder="Full name" required>
-        <input type="email" id="tenantEmail" placeholder="Email (must be @gmail.com)" required>
-        <input type="tel" id="tenantPhone" placeholder="Phone number" required>
-        <input type="password" id="tenantPassword" placeholder="Password" required>
-        <button type="button" class="btn-submit" onclick="registerTenant()">Create tenant account</button>
+<!-- TENANT MODAL -->
+<div id="tenantModal" class="modal-overlay">
+  <div class="modal-card">
+    <button class="close-modal" onclick="closeModal('tenantModal')"><i class="fas fa-times-circle"></i></button>
+    <h2><i class="fas fa-user"></i> Tenant</h2>
+    <div class="profile-upload-row" id="tenantUpload">
+      <div class="upload-preview-sm" id="tenantPreview">
+        <div class="preview-placeholder" id="tenantPlaceholder"><i class="fas fa-camera" style="font-size:2rem;"></i><span>photo</span></div>
+        <img id="tenantImg" class="hidden" style="width:100%; height:100%; object-fit:cover;">
+      </div>
+      <div class="upload-btns">
+        <button class="btn-upload" onclick="openCloudinaryFor('tenant')"><i class="fas fa-cloud-upload-alt"></i> upload</button>
+        <button class="btn-remove" onclick="removeImage('tenant')"><i class="fas fa-trash"></i> remove</button>
       </div>
     </div>
+    <div class="modal-field"><label>Full name</label><input type="text" id="tenantName"></div>
+    <div class="modal-field"><label>📧 email</label><input type="email" id="tenantEmail" placeholder="you@gmail.com"></div>
+    <div class="modal-field"><label>📞 phone</label><input type="tel" id="tenantPhone"></div>
+    <div class="modal-field"><label>🔑 password</label><input type="password" id="tenantPassword"></div>
+    <div class="modal-field"><label>✓ confirm</label><input type="password" id="tenantConfirm"></div>
+    <button class="btn-create" onclick="registerTenant()">CREATE ACCOUNT</button>
   </div>
+</div>
 
-  <!-- AGENT registration modal -->
-  <div class="modal-overlay" id="agentModal">
-    <div class="modal-card">
-      <h3><i class="fas fa-user-headset"></i> Agent signup</h3>
-      <div class="reg-form" id="agentForm">
-        <div class="profile-upload-section" id="agentUploadSection">
-          <label class="upload-label">Profile picture</label>
-          <div class="profile-upload-container">
-            <div class="upload-preview" id="agentPreview">
-              <div class="preview-placeholder" id="agentPlaceholder"><i class="fas fa-user-circle"></i><span>add</span></div>
-              <img id="agentImg" class="hidden">
-            </div>
-            <div class="upload-buttons">
-              <button class="btn-upload" type="button" onclick="openCloudinaryUploader('agent')"><i class="fas fa-cloud-upload-alt"></i> Upload</button>
-              <button class="btn-remove" type="button" onclick="removeProfileImage('agent')"><i class="fas fa-trash"></i> Remove</button>
-            </div>
-          </div>
-        </div>
-        <input type="text" id="agentName" placeholder="Full name" required>
-        <input type="tel" id="agentPhone" placeholder="Phone number" required>
-        <select id="agentCity" class="city-select" required>
-          <option value="" disabled selected>🏙️ City in Zambia</option>
-        </select>
-        <button type="button" class="btn-submit" onclick="registerAgent()">Create agent account</button>
+<!-- AGENT MODAL -->
+<div id="agentModal" class="modal-overlay">
+  <div class="modal-card">
+    <button class="close-modal" onclick="closeModal('agentModal')"><i class="fas fa-times-circle"></i></button>
+    <h2><i class="fas fa-id-badge"></i> Agent</h2>
+    <div class="profile-upload-row" id="agentUpload">
+      <div class="upload-preview-sm" id="agentPreview">
+        <div class="preview-placeholder" id="agentPlaceholder"><i class="fas fa-camera" style="font-size:2rem;"></i><span>photo</span></div>
+        <img id="agentImg" class="hidden" style="width:100%; height:100%; object-fit:cover;">
+      </div>
+      <div class="upload-btns">
+        <button class="btn-upload" onclick="openCloudinaryFor('agent')"><i class="fas fa-cloud-upload-alt"></i> upload</button>
+        <button class="btn-remove" onclick="removeImage('agent')"><i class="fas fa-trash"></i> remove</button>
       </div>
     </div>
+    <div class="modal-field"><label>Full name</label><input type="text" id="agentName" oninput="updateAgentEmail()"></div>
+    <div class="modal-field"><label>📧 email (auto)</label><small class="generated-email" id="agentEmailDisplay">agent@name.com</small></div>
+    <div class="modal-field"><label>📞 phone</label><input type="tel" id="agentPhone"></div>
+    <div class="modal-field"><label>🏙️ city</label><input list="zambia-cities" id="agentCity" placeholder="search city"></div>
+    <div class="modal-field"><label>🔑 password</label><input type="password" id="agentPassword"></div>
+    <div class="modal-field"><label>✓ confirm</label><input type="password" id="agentConfirm"></div>
+    <button class="btn-create" onclick="registerAgent()">CREATE ACCOUNT</button>
   </div>
+</div>
 
-  <!-- popup credentials modal (for agent/landlord) -->
-  <div class="modal-overlay" id="credentialModal">
-    <div class="modal-card" style="text-align: center;">
-      <i class="fas fa-envelope-open-text" style="font-size: 3rem; color:#8a4fff;"></i>
-      <h3 style="color:#4a2b7a;">Account created</h3>
-      <p id="credMessage" style="margin: 1rem 0; background: #efeaff; padding: 1rem; border-radius: 24px;"></p>
-      <button class="btn-submit" style="background:#4a2b7a;" onclick="closeCredentialModal()">OK</button>
-    </div>
-  </div>
+<!-- toast container -->
+<div class="toast-container" id="toast"></div>
 
-  <!-- toast container -->
-  <div class="toast-container" id="toastContainer"></div>
+<script>
+  // Firebase config (DMKL project)
+  const firebaseConfig = {
+    apiKey: "AIzaSyCzf9dZFB0l7ZEPLJ4tpo4bSjgQNW3VTus",
+    authDomain: "dmkl-8ea2c.firebaseapp.com",
+    databaseURL: "https://dmkl-8ea2c-default-rtdb.firebaseio.com",
+    projectId: "dmkl-8ea2c",
+    storageBucket: "dmkl-8ea2c.firebasestorage.app",
+    messagingSenderId: "155892504799",
+    appId: "1:155892504799:web:45ed0037fd0fe79b85b16a",
+    measurementId: "G-61M65C4MZ2"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database();
 
-  <script>
-    // ---------- FIREBASE INIT (new config) ----------
-    const firebaseConfig = {
-      apiKey: "AIzaSyCzf9dZFB0l7ZEPLJ4tpo4bSjgQNW3VTus",
-      authDomain: "dmkl-8ea2c.firebaseapp.com",
-      databaseURL: "https://dmkl-8ea2c-default-rtdb.firebaseio.com",
-      projectId: "dmkl-8ea2c",
-      storageBucket: "dmkl-8ea2c.firebasestorage.app",
-      messagingSenderId: "155892504799",
-      appId: "1:155892504799:web:45ed0037fd0fe79b85b16a",
-      measurementId: "G-61M65C4MZ2"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const database = firebase.database();
+  // Cloudinary settings (from first snippet)
+  const CLOUDINARY_CONFIG = {
+    cloudName: 'dd3lcymrk',
+    uploadPreset: 'h3eyhc2o',
+    folder: 'zynapse/profiles'
+  };
 
-    // ---------- Cloudinary config (from sample) ----------
-    const CLOUDINARY_CONFIG = {
-      cloudName: 'dd3lcymrk',
-      uploadPreset: 'h3eyhc2o',
-      folder: 'zynapse/profiles'
-    };
+  // per‑role image URLs
+  let landlordPhoto = '', tenantPhoto = '', agentPhoto = '';
 
-    // ---------- Global vars for profile images ----------
-      // store per role
-    let landlordImageUrl = '';
-    let tenantImageUrl = '';
-    let agentImageUrl = '';
+  // ---------- UI helpers ----------
+  function showToast(msg, duration = 2500) {
+    const toast = document.getElementById('toast');
+    toast.innerHTML = `<div class="toast">${msg}</div>`;
+    setTimeout(() => toast.innerHTML = '', duration);
+  }
 
-    // ---------- Zambia cities (sample) ----------
-    const zambiaCities = [
-      'Lusaka', 'Ndola', 'Kitwe', 'Kabwe', 'Chingola', 'Mufulira', 'Livingstone', 'Kasama', 'Chipata', 'Solwezi',
-      'Mongu', 'Mansa', 'Mazabuka', 'Kafue', 'Luanshya', 'Kalulushi', 'Choma', 'Mpika', 'Siavonga', 'Kapiri Mposhi'
-    ];
+  function togglePassword() {
+    const pwd = document.getElementById('loginPassword');
+    pwd.type = pwd.type === 'password' ? 'text' : 'password';
+  }
 
-    function populateCityDropdowns() {
-      const selects = document.querySelectorAll('.city-select');
-      selects.forEach(select => {
-        select.innerHTML = '<option value="" disabled selected>🏙️ City in Zambia</option>';
-        zambiaCities.forEach(city => {
-          const opt = document.createElement('option');
-          opt.value = city;
-          opt.textContent = city;
-          select.appendChild(opt);
-        });
-      });
-    }
-    populateCityDropdowns();
+  function openModal(id) { document.getElementById(id).classList.add('show'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
-    // ---------- Toast ----------
-    function showToast(msg, type = 'info') {
-      const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      toast.className = `toast ${type}`;
-      toast.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'info-circle'}"></i> ${msg}`;
-      container.appendChild(toast);
-      setTimeout(() => toast.remove(), 4000);
-    }
+  // dynamic email generation for landlord/agent
+  function updateLandlordEmail() {
+    const name = document.getElementById('landlordName').value.trim();
+    const sanitized = name.replace(/\s+/g, '').toLowerCase() || 'name';
+    document.getElementById('landlordEmailDisplay').innerText = `landlord@${sanitized}.com`;
+  }
+  function updateAgentEmail() {
+    const name = document.getElementById('agentName').value.trim();
+    const sanitized = name.replace(/\s+/g, '').toLowerCase() || 'name';
+    document.getElementById('agentEmailDisplay').innerText = `agent@${sanitized}.com`;
+  }
 
-    // ---------- Modal controls ----------
-    const modals = {
-      landlord: document.getElementById('landlordModal'),
-      tenant: document.getElementById('tenantModal'),
-      agent: document.getElementById('agentModal')
-    };
-    document.getElementById('showLandlordReg').addEventListener('click', ()=> modals.landlord.classList.add('show'));
-    document.getElementById('showTenantReg').addEventListener('click', ()=> modals.tenant.classList.add('show'));
-    document.getElementById('showAgentReg').addEventListener('click', ()=> modals.agent.classList.add('show'));
-
-    // close modals when clicking overlay background
-    Object.values(modals).forEach(m => m.addEventListener('click', (e) => { if(e.target === m) m.classList.remove('show'); }));
-
-    // ---------- Cloudinary upload (reusable per role) ----------
-    let activeRole = null;
-    function openCloudinaryUploader(role) {
-      activeRole = role;
-      if (!window.cloudinaryWidget) {
-        window.cloudinaryWidget = cloudinary.createUploadWidget({
-          cloudName: CLOUDINARY_CONFIG.cloudName,
-          uploadPreset: CLOUDINARY_CONFIG.uploadPreset,
-          sources: ['local', 'camera'],
-          multiple: false,
-          cropping: true,
-          croppingAspectRatio: 1,
-          folder: CLOUDINARY_CONFIG.folder,
-        }, (error, result) => {
-          if (!error && result && result.event === "success") {
-            const url = result.info.secure_url;
-            if (activeRole === 'landlord') {
-              landlordImageUrl = url;
-              document.getElementById('landlordImg').src = url;
-              document.getElementById('landlordImg').classList.remove('hidden');
-              document.getElementById('landlordPlaceholder').classList.add('hidden');
-            } else if (activeRole === 'tenant') {
-              tenantImageUrl = url;
-              document.getElementById('tenantImg').src = url;
-              document.getElementById('tenantImg').classList.remove('hidden');
-              document.getElementById('tenantPlaceholder').classList.add('hidden');
-            } else if (activeRole === 'agent') {
-              agentImageUrl = url;
-              document.getElementById('agentImg').src = url;
-              document.getElementById('agentImg').classList.remove('hidden');
-              document.getElementById('agentPlaceholder').classList.add('hidden');
-            }
-            showToast('Image uploaded!', 'success');
-          } else if (error) {
-            showToast('Upload error', 'error');
-          }
-        });
-      }
-      window.cloudinaryWidget.open();
-    }
-
-    function removeProfileImage(role) {
-      if (role === 'landlord') {
-        landlordImageUrl = '';
-        document.getElementById('landlordImg').classList.add('hidden');
-        document.getElementById('landlordPlaceholder').classList.remove('hidden');
-      } else if (role === 'tenant') {
-        tenantImageUrl = '';
-        document.getElementById('tenantImg').classList.add('hidden');
-        document.getElementById('tenantPlaceholder').classList.remove('hidden');
-      } else if (role === 'agent') {
-        agentImageUrl = '';
-        document.getElementById('agentImg').classList.add('hidden');
-        document.getElementById('agentPlaceholder').classList.remove('hidden');
-      }
-    }
-
-    // ---------- Helper: random password ----------
-    function randomPassword() {
-      return Math.random().toString(36).slice(-8) + 'A1!';
-    }
-
-    // ---------- Register landlord (no email field, generate landlord@name.com) ----------
-    async function registerLandlord() {
-      const name = document.getElementById('landlordName').value.trim();
-      const phone = document.getElementById('landlordPhone').value.trim();
-      const city = document.getElementById('landlordCity').value;
-      if (!name || !phone || !city || !landlordImageUrl) {
-        showToast('Please fill all fields and upload a profile picture', 'error');
-        return;
-      }
-      // generate email: landlord@(firstName?). use full name lower case, remove spaces
-      const emailLocal = 'landlord@' + name.toLowerCase().replace(/\s+/g, '') + '.com';
-      const password = randomPassword();
-
-      try {
-        const cred = await auth.createUserWithEmailAndPassword(emailLocal, password);
-        const user = cred.user;
-        // store in RTDB
-        await database.ref('users/' + user.uid).set({
-          role: 'landlord',
-          fullName: name,
-          phone: phone,
-          city: city,
-          profilePicture: landlordImageUrl,
-          loginEmail: emailLocal,
-          createdAt: new Date().toISOString()
-        });
-        // show popup with credentials
-        document.getElementById('credMessage').innerText = `use email ${emailLocal} and password ${password} to log in.`;
-        document.getElementById('credentialModal').classList.add('show');
-        modals.landlord.classList.remove('show');
-        // clear fields
-        document.getElementById('landlordName').value = '';
-        document.getElementById('landlordPhone').value = '';
-        document.getElementById('landlordCity').value = '';
-        removeProfileImage('landlord');
-        landlordImageUrl = '';
-      } catch (err) {
-        showToast('Error: ' + err.message, 'error');
-      }
-    }
-
-    // ---------- Register tenant (uses provided email, must be @gmail.com) ----------
-    async function registerTenant() {
-      const name = document.getElementById('tenantName').value.trim();
-      const email = document.getElementById('tenantEmail').value.trim();
-      const phone = document.getElementById('tenantPhone').value.trim();
-      const password = document.getElementById('tenantPassword').value;
-      if (!name || !email || !phone || !password || !tenantImageUrl) {
-        showToast('All fields + profile picture required', 'error');
-        return;
-      }
-      if (!email.toLowerCase().endsWith('@gmail.com')) {
-        showToast('Tenant email must be @gmail.com', 'error');
-        return;
-      }
-      try {
-        const cred = await auth.createUserWithEmailAndPassword(email, password);
-        const user = cred.user;
-        await database.ref('users/' + user.uid).set({
-          role: 'tenant',
-          fullName: name,
-          phone: phone,
-          profilePicture: tenantImageUrl,
-          email: email,
-          createdAt: new Date().toISOString()
-        });
-        showToast('Tenant account created! You can now log in.', 'success');
-        modals.tenant.classList.remove('show');
-        document.getElementById('tenantName').value = '';
-        document.getElementById('tenantEmail').value = '';
-        document.getElementById('tenantPhone').value = '';
-        document.getElementById('tenantPassword').value = '';
-        removeProfileImage('tenant');
-        tenantImageUrl = '';
-      } catch (err) {
-        showToast(err.message, 'error');
-      }
-    }
-
-    // ---------- Register agent (similar to landlord) ----------
-    async function registerAgent() {
-      const name = document.getElementById('agentName').value.trim();
-      const phone = document.getElementById('agentPhone').value.trim();
-      const city = document.getElementById('agentCity').value;
-      if (!name || !phone || !city || !agentImageUrl) {
-        showToast('All fields + profile picture required', 'error');
-        return;
-      }
-      const emailLocal = 'agent@' + name.toLowerCase().replace(/\s+/g, '') + '.com';
-      const password = randomPassword();
-
-      try {
-        const cred = await auth.createUserWithEmailAndPassword(emailLocal, password);
-        const user = cred.user;
-        await database.ref('users/' + user.uid).set({
-          role: 'agent',
-          fullName: name,
-          phone: phone,
-          city: city,
-          profilePicture: agentImageUrl,
-          loginEmail: emailLocal,
-          createdAt: new Date().toISOString()
-        });
-        document.getElementById('credMessage').innerText = `use email ${emailLocal} and password ${password} to log in.`;
-        document.getElementById('credentialModal').classList.add('show');
-        modals.agent.classList.remove('show');
-        document.getElementById('agentName').value = '';
-        document.getElementById('agentPhone').value = '';
-        document.getElementById('agentCity').value = '';
-        removeProfileImage('agent');
-        agentImageUrl = '';
-      } catch (err) {
-        showToast(err.message, 'error');
-      }
-    }
-
-    function closeCredentialModal() {
-      document.getElementById('credentialModal').classList.remove('show');
-    }
-
-    // ---------- LOGIN & REDIRECT based on email pattern ----------
-    document.getElementById('loginBtn').addEventListener('click', async (e) => {
-      const email = document.getElementById('loginEmail').value.trim();
-      const pass = document.getElementById('loginPassword').value.trim();
-      if (!email || !pass) {
-        showToast('Enter email and password', 'error');
-        return;
-      }
-      try {
-        const userCred = await auth.signInWithEmailAndPassword(email, pass);
-        const user = userCred.user;
-        // fetch role from db (optional, but we can rely on email pattern)
-        // redirect based on email pattern:
-        if (email.toLowerCase().endsWith('@gmail.com')) {
-          window.location.href = 'tenant.html';
-        } else if (email.toLowerCase().startsWith('landlord@')) {
-          window.location.href = 'landlord.html';
-        } else if (email.toLowerCase().startsWith('agent@')) {
-          window.location.href = 'agent.html';
-        } else {
-          // fallback
-          showToast('Logged in, but role unknown. Redirect to default.', 'info');
-          window.location.href = 'home.html';
+  // ---------- Cloudinary upload (per role) ----------
+  function openCloudinaryFor(role) {
+    const widget = cloudinary.createUploadWidget({
+      cloudName: CLOUDINARY_CONFIG.cloudName,
+      uploadPreset: CLOUDINARY_CONFIG.uploadPreset,
+      sources: ['local', 'camera'],
+      multiple: false,
+      folder: CLOUDINARY_CONFIG.folder,
+      cropping: true,
+      croppingAspectRatio: 1
+    }, (error, result) => {
+      if (!error && result && result.event === 'success') {
+        const url = result.info.secure_url;
+        if (role === 'landlord') {
+          landlordPhoto = url;
+          document.getElementById('landlordImg').src = url;
+          document.getElementById('landlordImg').classList.remove('hidden');
+          document.getElementById('landlordPlaceholder').classList.add('hidden');
+        } else if (role === 'tenant') {
+          tenantPhoto = url;
+          document.getElementById('tenantImg').src = url;
+          document.getElementById('tenantImg').classList.remove('hidden');
+          document.getElementById('tenantPlaceholder').classList.add('hidden');
+        } else if (role === 'agent') {
+          agentPhoto = url;
+          document.getElementById('agentImg').src = url;
+          document.getElementById('agentImg').classList.remove('hidden');
+          document.getElementById('agentPlaceholder').classList.add('hidden');
         }
-      } catch (err) {
-        showToast('Login failed: ' + err.message, 'error');
-      }
+        showToast('📸 photo uploaded!');
+      } else if (error) showToast('upload error', 2000);
     });
+    widget.open();
+  }
 
-    // close credential modal also on background click
-    document.getElementById('credentialModal').addEventListener('click', function(e) {
-      if (e.target === this) closeCredentialModal();
+  function removeImage(role) {
+    if (role === 'landlord') {
+      landlordPhoto = ''; 
+      document.getElementById('landlordImg').classList.add('hidden');
+      document.getElementById('landlordPlaceholder').classList.remove('hidden');
+    } else if (role === 'tenant') {
+      tenantPhoto = '';
+      document.getElementById('tenantImg').classList.add('hidden');
+      document.getElementById('tenantPlaceholder').classList.remove('hidden');
+    } else if (role === 'agent') {
+      agentPhoto = '';
+      document.getElementById('agentImg').classList.add('hidden');
+      document.getElementById('agentPlaceholder').classList.remove('hidden');
+    }
+  }
+
+  // ---------- REGISTER functions ----------
+  function registerLandlord() {
+    const name = document.getElementById('landlordName').value.trim();
+    const phone = document.getElementById('landlordPhone').value.trim();
+    const city = document.getElementById('landlordCity').value.trim();
+    const pwd = document.getElementById('landlordPassword').value;
+    const confirm = document.getElementById('landlordConfirm').value;
+    if (!name || !phone || !city || !pwd || !confirm) return showToast('fill all fields');
+    if (pwd !== confirm) return showToast('passwords differ');
+    if (pwd.length < 6) return showToast('password min 6 chars');
+    if (!landlordPhoto) return showToast('upload profile picture');
+
+    const email = `landlord@${name.replace(/\s+/g, '').toLowerCase()}.com`;
+    auth.createUserWithEmailAndPassword(email, pwd)
+      .then(cred => {
+        const uid = cred.user.uid;
+        return db.ref('users/' + uid).set({
+          role: 'landlord', name, phone, city, photo: landlordPhoto, email: email,
+          createdAt: new Date().toISOString()
+        }).then(() => {
+          showToast(`✅ landlord created! use email ${email} and your password.`);
+          closeModal('landlordModal');
+          // show popup message as requested
+          setTimeout(() => alert(`please use email: ${email} and your chosen password to log in`), 300);
+        });
+      })
+      .catch(err => showToast(err.message));
+  }
+
+  function registerAgent() {
+    const name = document.getElementById('agentName').value.trim();
+    const phone = document.getElementById('agentPhone').value.trim();
+    const city = document.getElementById('agentCity').value.trim();
+    const pwd = document.getElementById('agentPassword').value;
+    const confirm = document.getElementById('agentConfirm').value;
+    if (!name || !phone || !city || !pwd || !confirm) return showToast('fill all fields');
+    if (pwd !== confirm) return showToast('passwords differ');
+    if (pwd.length < 6) return showToast('password min 6 chars');
+    if (!agentPhoto) return showToast('upload profile picture');
+
+    const email = `agent@${name.replace(/\s+/g, '').toLowerCase()}.com`;
+    auth.createUserWithEmailAndPassword(email, pwd)
+      .then(cred => {
+        const uid = cred.user.uid;
+        return db.ref('users/' + uid).set({
+          role: 'agent', name, phone, city, photo: agentPhoto, email: email,
+          createdAt: new Date().toISOString()
+        }).then(() => {
+          showToast(`✅ agent created! use email ${email}`);
+          closeModal('agentModal');
+          setTimeout(() => alert(`please use email: ${email} and your chosen password to log in`), 300);
+        });
+      })
+      .catch(err => showToast(err.message));
+  }
+
+  function registerTenant() {
+    const name = document.getElementById('tenantName').value.trim();
+    const email = document.getElementById('tenantEmail').value.trim();
+    const phone = document.getElementById('tenantPhone').value.trim();
+    const pwd = document.getElementById('tenantPassword').value;
+    const confirm = document.getElementById('tenantConfirm').value;
+    if (!name || !email || !phone || !pwd || !confirm) return showToast('fill all fields');
+    if (pwd !== confirm) return showToast('passwords differ');
+    if (pwd.length < 6) return showToast('password min 6 chars');
+    if (!tenantPhoto) return showToast('upload profile picture');
+
+    auth.createUserWithEmailAndPassword(email, pwd)
+      .then(cred => {
+        const uid = cred.user.uid;
+        return db.ref('users/' + uid).set({
+          role: 'tenant', name, phone, photo: tenantPhoto, email: email,
+          createdAt: new Date().toISOString()
+        }).then(() => {
+          showToast('✅ tenant registered!');
+          closeModal('tenantModal');
+        });
+      })
+      .catch(err => showToast(err.message));
+  }
+
+  // ---------- LOGIN (with role redirect) ----------
+  function loginUser() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pwd = document.getElementById('loginPassword').value;
+    if (!email || !pwd) return showToast('enter email/password');
+
+    auth.signInWithEmailAndPassword(email, pwd)
+      .then(cred => {
+        const uid = cred.user.uid;
+        return db.ref('users/' + uid).once('value').then(snap => snap.val());
+      })
+      .then(userData => {
+        if (!userData) throw new Error('no role data');
+        const role = userData.role;
+        let redirect = '';
+        if (role === 'tenant') redirect = 'tenant.html';
+        else if (role === 'agent') redirect = 'agent.html';
+        else if (role === 'landlord') redirect = 'landlord.html';
+        else redirect = 'index.html';
+        showToast(`welcome ${userData.name}`);
+        setTimeout(() => window.location.href = redirect, 1000);
+      })
+      .catch(err => showToast('login error: ' + err.message));
+  }
+
+  // hide modals on overlay click (optional)
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal-overlay')) 
+        overlay.classList.remove('show');
     });
+  });
 
-    // populate cities again if any new selects appear (none)
-  </script>
+  // initial email displays
+  window.addEventListener('DOMContentLoaded', () => {
+    updateLandlordEmail();
+    updateAgentEmail();
+  });
+</script>
 </body>
 </html>
