@@ -44,6 +44,7 @@
             transition: transform 0.2s, opacity 0.2s;
             text-align: center;
             display: inline-block;
+            width: 100%;
         }
         .btn-primary:hover { transform: scale(1.05); opacity: 0.9; }
         .btn-outline {
@@ -54,8 +55,13 @@
             font-weight: 500;
             cursor: pointer;
             transition: color 0.3s;
+            width: 100%;
         }
         .btn-outline:hover { color: var(--primary-purple); }
+        .btn-outline-border {
+            border: 1px solid var(--primary-purple);
+            border-radius: 30px;
+        }
         .section-title {
             font-size: 2.5rem;
             font-weight: 700;
@@ -291,7 +297,7 @@
         /* --- DOWNLOAD SECTION --- */
         .download-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* ALWAYS 2 COLUMNS */
+            grid-template-columns: 1fr 1fr;
             gap: 20px;
             margin-top: 30px;
         }
@@ -306,6 +312,29 @@
         .download-card:hover { transform: translateY(-5px); }
         .download-card i { font-size: 2.5rem; color: var(--primary-purple); margin-bottom: 15px; }
         .download-card h4 { margin-bottom: 10px; }
+
+        /* --- FOUNDER SECTION --- */
+        .founder-image-wrapper {
+            max-width: 400px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(109, 93, 252, 0.3);
+            border: 2px solid var(--primary-purple);
+        }
+        .founder-image-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* --- BUTTON GRID FOR CTA --- */
+        .cta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
 
         /* --- RESPONSIVE --- */
         @media (max-width: 1024px) {
@@ -337,7 +366,7 @@
             .hero-text h1 { font-size: 1.6rem; }
             .hero-text p { font-size: 0.8rem; max-width: 100%; margin-bottom: 15px; }
             .hero-buttons { flex-direction: column; align-items: flex-start; }
-            .hero-buttons .btn-primary, .hero-buttons .btn-outline { padding: 8px 16px; font-size: 0.7rem; }
+            .hero-buttons .btn-primary, .hero-buttons .btn-outline { padding: 8px 16px; font-size: 0.7rem; width: auto; }
 
             .hero-visuals { 
                 flex: 0 0 45%; 
@@ -369,7 +398,6 @@
                 bottom: 5px; 
             }
             
-            /* Force 2 columns even on small phones */
             .download-grid {
                 grid-template-columns: 1fr 1fr;
                 gap: 10px;
@@ -380,6 +408,15 @@
             .download-card i { font-size: 1.8rem; }
             .download-card h4 { font-size: 0.9rem; }
             .download-card p { font-size: 0.75rem; }
+            
+            /* CTA Grid remains 2x2 */
+            .cta-grid {
+                gap: 10px;
+            }
+            .cta-grid .btn-primary, .cta-grid .btn-outline {
+                padding: 10px 15px;
+                font-size: 0.8rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -388,6 +425,14 @@
             .hero-phone-wrapper { width: 55px; height: 100px; }
             .hero-graph-widget { width: 65px; height: 50px; }
             .generic-text h2 { font-size: 1.5rem; }
+            .cta-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .cta-grid .btn-primary, .cta-grid .btn-outline {
+                font-size: 0.7rem;
+                padding: 8px 12px;
+            }
         }
     </style>
 </head>
@@ -450,7 +495,6 @@
             <p style="text-align: center; color: var(--text-grey); max-width: 700px; margin: 0 auto 40px auto; line-height: 1.6;">
                 Many people want to learn forex trading but struggle to find reliable education, proper mentorship, and consistent guidance. The Elite Trading App was created to solve this problem by giving students a complete forex ecosystem that is easy to access and understand.
             </p>
-            <!-- 2-COLUMN GRID FOR GOALS -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                 <div style="background: #151527; padding: 25px; border-radius: 15px; border: 1px solid #2d2d44;">
                     <i class="fas fa-graduation-cap" style="color: var(--primary-purple); font-size: 1.5rem; margin-bottom: 15px;"></i>
@@ -599,7 +643,6 @@
             <p style="text-align: center; color: var(--text-grey); max-width: 700px; margin: 0 auto 40px auto; line-height: 1.6;">
                 Why traders love the platform and how it helps build a solid foundation for long-term success.
             </p>
-            <!-- 2-COLUMN GRID FOR BENEFITS -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                 <div style="background: #151527; padding: 25px; border-radius: 15px; border: 1px solid #2d2d44; text-align: center;">
                     <i class="fas fa-globe" style="color: var(--primary-purple); font-size: 2rem; margin-bottom: 15px;"></i>
@@ -703,7 +746,6 @@
             <div class="generic-text">
                 <h2>Security & <span>Privacy</span></h2>
                 <p>The Elite App prioritizes student privacy and account security with industry-standard protection measures to keep your data safe.</p>
-                <!-- 2-COLUMN GRID FOR SECURITY -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
                     <div style="background: #151527; padding: 15px; border-radius: 12px; border: 1px solid #2d2d44;">
                         <i class="fas fa-lock" style="color: var(--primary-purple); margin-bottom: 5px; display: block;"></i>
@@ -726,8 +768,32 @@
         </div>
     </section>
 
+    <!-- FOUNDER SECTION -->
+    <section class="generic-section" style="border-top: 1px solid #2d2d44;">
+        <div class="container generic-row">
+            <div class="generic-text">
+                <!-- CHANGED TITLE TO "OUR VISIONARY LEADER" -->
+                <h2>Our <span>Visionary Leader</span></h2>
+                <p>Eric Mwansa is a highly respected and professional forex trading mentor. With years of experience in the financial markets, he has helped thousands of students worldwide achieve financial independence through disciplined trading strategies and practical education.</p>
+                <p>His dedication to making forex accessible to everyone has earned him a reputation for being reliable, knowledgeable, and deeply committed to his students' success. Eric's professional approach and proven track record make him a trusted leader in the industry.</p>
+                <p>Under Eric's guidance, Elite Trading Academy has grown into a community-driven platform where students learn not just how to trade, but how to think like successful traders.</p>
+                <div style="margin-top: 15px;">
+                    <i class="fas fa-check-circle" style="color: var(--primary-purple);"></i> <span style="color: var(--text-grey);">Professional & Trusted Mentor</span><br>
+                    <i class="fas fa-check-circle" style="color: var(--primary-purple); margin-top: 8px;"></i> <span style="color: var(--text-grey);">Thousands of Successful Students</span><br>
+                    <i class="fas fa-check-circle" style="color: var(--primary-purple); margin-top: 8px;"></i> <span style="color: var(--text-grey);">Proven Track Record of Success</span>
+                </div>
+            </div>
+            <div class="generic-visual" style="height: auto; justify-content: center;">
+                <div class="founder-image-wrapper">
+                    <!-- CUSTOM ERIC IMAGE -->
+                    <img src="eric.png" alt="Eric Mwansa - Founder of Elite Trading Academy">
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- DOWNLOAD SECTION -->
-    <section class="generic-section">
+    <section class="generic-section" style="background: #0a0a12;">
         <div class="container">
             <h2 class="section-title" style="text-align: center;">Download The <span>Elite Trading App</span> Today</h2>
             <p style="text-align: center; color: var(--text-grey); max-width: 700px; margin: 0 auto 40px auto; line-height: 1.6;">
@@ -763,13 +829,12 @@
     </section>
 
     <!-- APP PROMOTION SECTION -->
-    <section class="generic-section" style="background: #0a0a12;">
+    <section class="generic-section">
         <div class="container" style="text-align: center;">
             <h2 class="section-title">More Than Just <span>A Trading App</span></h2>
             <p style="color: var(--text-grey); max-width: 800px; margin: 0 auto 40px auto; line-height: 1.6;">
                 The Elite Trading App is a complete learning and mentorship ecosystem focused on helping students improve their financial knowledge and trading skills through consistency, education, and community support.
             </p>
-            <!-- 2-COLUMN GRID FOR PROMO CARDS -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 600px; margin: 0 auto;">
                 <div style="background: #151527; padding: 25px; border-radius: 15px; border: 1px solid #2d2d44;">
                     <i class="fas fa-graduation-cap" style="color: var(--primary-purple); font-size: 2rem; margin-bottom: 10px;"></i>
@@ -800,23 +865,24 @@
     </section>
 
     <!-- CALL TO ACTION -->
-    <section class="generic-section">
+    <section class="generic-section" style="background: #0a0a12;">
         <div class="container" style="text-align: center;">
             <h2 class="section-title">Start Your <span>Forex Journey</span> Today</h2>
             <p style="color: var(--text-grey); max-width: 700px; margin: 0 auto 30px auto; line-height: 1.6;">
                 Join thousands of ambitious students learning forex trading with Elite Trading Academy. Gain access to premium forex education, live market analysis, professional mentorship, trading signals, community support, and financial growth opportunities.
             </p>
-            <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <!-- 2x2 BUTTON GRID -->
+            <div class="cta-grid">
                 <button class="btn-primary">ENROLL NOW</button>
                 <button class="btn-primary" style="background: linear-gradient(90deg, #5b4be7, #7c6df0);">DOWNLOAD THE APP</button>
-                <button class="btn-outline" style="border: 1px solid var(--primary-purple); border-radius: 30px;">JOIN VIP SIGNALS</button>
-                <button class="btn-outline" style="border: 1px solid var(--primary-purple); border-radius: 30px;">START LEARNING TODAY</button>
+                <button class="btn-outline btn-outline-border">JOIN VIP SIGNALS</button>
+                <button class="btn-outline btn-outline-border">START LEARNING TODAY</button>
             </div>
         </div>
     </section>
 
     <!-- CLOSING STATEMENT -->
-    <section style="padding: 60px 0; text-align: center; border-top: 1px solid #1a1a2e; background: #0a0a12;">
+    <section style="padding: 60px 0; text-align: center; border-top: 1px solid #1a1a2e;">
         <div class="container">
             <p style="color: var(--text-grey); font-size: 1.1rem; max-width: 800px; margin: 0 auto; line-height: 1.8;">
                 Your financial future begins with knowledge, discipline, and action. With the Elite Trading App, students gain access to a platform designed to support their learning journey every step of the way.
